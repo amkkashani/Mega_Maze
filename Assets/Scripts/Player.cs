@@ -7,6 +7,8 @@ public class Player : MonoBehaviour
     [SerializeField] private float minmumAcceptableDistance = 0.1f;
     [SerializeField] private float reachSpeedFactor = 0.05f;
     [SerializeField] private float explosionRadius = 1f;
+    [SerializeField] private int points = 0;
+    [SerializeField] private int bombNumber = 5;
     
     private Vector3 finalTarget;
     private int[] posIndex;
@@ -72,8 +74,9 @@ public class Player : MonoBehaviour
             transform.Translate((finalTarget - transform.position) * reachSpeedFactor);
         }
 
-        if (Input.GetKeyDown(KeyCode.Keypad0))
+        if (Input.GetKeyDown(KeyCode.Keypad0) && bombNumber != 0)
         {
+            bombNumber--;
             destroyEnv();
         }
     }
@@ -104,5 +107,10 @@ public class Player : MonoBehaviour
                 hitCollider.GetComponent<Obstacle>()?.wallDestruction();
             }
         }
+    }
+
+    public void getPoint(int value)
+    {
+        this.points += value;
     }
 }

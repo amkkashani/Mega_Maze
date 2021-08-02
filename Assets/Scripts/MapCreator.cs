@@ -79,6 +79,7 @@ public class MapCreator : Singleton<MapCreator>
         int[] start = tempEmptyList[rnd];
         tempEmptyList.RemoveAt(rnd);
         GameObject _playerObj = instanceInMap(player, start[0], start[1]);
+        _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
         _playerObj.GetComponent<Player>()
             .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true);
 
@@ -88,8 +89,8 @@ public class MapCreator : Singleton<MapCreator>
             rnd = Random.Range(0, tempEmptyList.Count);
             // Debug.Log(tempEmptyList.Count);
             int[] goalIndex = tempEmptyList[rnd];
-            GameObject newWall = instanceInMap(_goal, goalIndex[0], goalIndex[1], 0.5f);
-            newWall.GetComponent<Obstacle>()?.setterXZ(goalIndex[0], goalIndex[1]);
+            // GameObject newWall = instanceInMap(_goal, goalIndex[0], goalIndex[1], 0.5f); //todo good for making bugs
+            // newWall.GetComponent<Obstacle>()?.setterXZ(goalIndex[0], goalIndex[1]);
             changeMap(goalIndex[0], goalIndex[1], 3); //convert empty space to goal point
             tempEmptyList.RemoveAt(rnd);
         }
@@ -157,7 +158,7 @@ public class MapCreator : Singleton<MapCreator>
                 newObj.GetComponent<Obstacle>().setterXZ(oldX,oldY);
                 break;
             case 3:
-                newObj =instanceInMap(_goal, oldX, oldY);
+                newObj =instanceInMap(_goal, oldX, oldY , 0.5f);
                 newObj.GetComponent<Obstacle>().setterXZ(oldX,oldY);
                 break;
 
