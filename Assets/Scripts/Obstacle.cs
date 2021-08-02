@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
+    [SerializeField]protected GameObject afterDestroyed;
     protected int x;
     protected int z;
 
@@ -19,8 +20,15 @@ public class Obstacle : MonoBehaviour
         this.z = z;
     }
 
-    protected void changeToNormallWall(Material material)
+    protected void changeToNormallWall()
     {
-        MapCreator.Instance.changeMap(x,z,1 );
+        MapCreator.Instance.changeMap(x,z,1  );
+    }
+
+    public void wallDestruction()
+    {
+        MapCreator.Instance.changeMap(x,z,0);
+        Destroy(Instantiate(afterDestroyed, transform.position,
+            Quaternion.identity), 2);
     }
 }

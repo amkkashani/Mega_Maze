@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2696922849576595126}
   m_Layer: 0
   m_Name: oneWay
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -108,4 +108,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b324d7d2d5c6f04abbe87ea49b15a48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _material: {fileID: 2100000, guid: 60734ffaf4e4e114fa46a1de397d0c00, type: 2}
+  afterDestroyed: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}

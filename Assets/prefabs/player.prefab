@@ -112,6 +112,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minmumAcceptableDistance: 0.1
   reachSpeedFactor: 0.05
+  explosionRadius: 3
 --- !u!54 &1347968513
 Rigidbody:
   m_ObjectHideFlags: 0

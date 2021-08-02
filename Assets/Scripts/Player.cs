@@ -71,6 +71,11 @@ public class Player : MonoBehaviour
         {
             transform.Translate((finalTarget - transform.position) * reachSpeedFactor);
         }
+
+        if (Input.GetKeyDown(KeyCode.Keypad0))
+        {
+            destroyEnv();
+        }
     }
 
     //
@@ -94,9 +99,9 @@ public class Player : MonoBehaviour
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.tag == "wall")
+            if (hitCollider.tag == "Wall")
             {
-                
+                hitCollider.GetComponent<Obstacle>()?.wallDestruction();
             }
         }
     }

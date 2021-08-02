@@ -20,7 +20,7 @@ public class MapCreator : Singleton<MapCreator>
     [SerializeField] private GameObject player;
 
     private int x, z;
-    [SerializeField]private int[,] map;
+    [SerializeField]private Obstacle[,] map;
     private int[] _playerPos = new int[2];
     private List<int[]> emptyList;
 
@@ -30,7 +30,7 @@ public class MapCreator : Singleton<MapCreator>
         // Debug.Log("debuged");
         x = (int) ((int) this.transform.localScale.x / blockSizeOfMap);
         z = (int) ((int) this.transform.localScale.z / blockSizeOfMap);
-        map = new int[x, z];
+        map = new Obstacle[x, z];
     }
 
     public void Start()
@@ -49,19 +49,20 @@ public class MapCreator : Singleton<MapCreator>
                 // Debug.Log(rnd +"___"+ probEmptyWall);
                 if (rnd < probEmptyWall)
                 {
-                    map[i, j] = 0;
+                    
                     newObj = instanceInMap(EmptyWall, i, j);
+                    map[i, j] = newObj.GetComponent<Obstacle>();
                     emptyList.Add(new[] {i, j});
                 }
                 else if (rnd < probEmptyWall + probNormallWall)
                 {
-                    map[i, j] = 1;
                     newObj = instanceInMap(normallWall, i, j);
+                    map[i, j] = newObj.GetComponent<Obstacle>();
                 }
                 else if (rnd < probEmptyWall + probNormallWall + probOneWayWall)
                 {
-                    map[i, j] = 2;
                     newObj = instanceInMap(oneWayWall, i, j);
+                    map[i, j] = newObj.GetComponent<Obstacle>();
                 }
 
                 newObj.GetComponent<Obstacle>().setterXZ(i, j);
@@ -126,7 +127,7 @@ public class MapCreator : Singleton<MapCreator>
         }
 
         // Debug.Log(map[i,j] +"***" + i +"-" + j);
-        if (map[i, j] == 1) //it must be empty wall or one way wall
+        if (map[i, j] is NormalWall) //it must be empty wall or one way wall
         {
             Debug.Log("wall");
             return null;
@@ -139,23 +140,28 @@ public class MapCreator : Singleton<MapCreator>
 
     public void changeMap(int oldX, int oldY, int result)
     {
-        this.map[oldX, oldY] = result;
-        Debug.Log(this.map[oldX, oldY]);
+        GameObject newObj = null;
+        Destroy(map[oldX,oldY].gameObject); 
+        // Debug.Log(this.map[oldX, oldY]);
         switch (result)
         {
             case 0:
-                instanceInMap(EmptyWall, oldX, oldY);
+                newObj = instanceInMap(EmptyWall, oldX, oldY);
                 break;
             case 1:
-                instanceInMap(normallWall, oldX, oldY);
+                newObj = instanceInMap(normallWall, oldX, oldY);
+                newObj.GetComponent<Obstacle>().setterXZ(oldX,oldY);
                 break;
             case 2:
-                instanceInMap(oneWayWall, oldX, oldY);
+                newObj =instanceInMap(oneWayWall, oldX, oldY);
+                newObj.GetComponent<Obstacle>().setterXZ(oldX,oldY);
                 break;
             case 3:
-                instanceInMap(_goal, oldX, oldY);
+                newObj =instanceInMap(_goal, oldX, oldY);
+                newObj.GetComponent<Obstacle>().setterXZ(oldX,oldY);
                 break;
 
         }
+        map[oldX, oldY] = newObj.GetComponent<Obstacle>();
     }
 }
