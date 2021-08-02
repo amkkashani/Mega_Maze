@@ -20,7 +20,7 @@ public class MapCreator : Singleton<MapCreator>
     [SerializeField] private GameObject player;
 
     private int x, z;
-    private int[,] map;
+    [SerializeField]private int[,] map;
     private int[] _playerPos = new int[2];
     private List<int[]> emptyList;
 
@@ -64,7 +64,7 @@ public class MapCreator : Singleton<MapCreator>
                     newObj = instanceInMap(oneWayWall, i, j);
                 }
 
-                newObj.GetComponent<Walls>().setterXZ(i, j);
+                newObj.GetComponent<Obstacle>().setterXZ(i, j);
             }
         }
 
@@ -88,7 +88,7 @@ public class MapCreator : Singleton<MapCreator>
             // Debug.Log(tempEmptyList.Count);
             int[] goalIndex = tempEmptyList[rnd];
             GameObject newWall = instanceInMap(_goal, goalIndex[0], goalIndex[1], 0.5f);
-            newWall.GetComponent<Walls>()?.setterXZ(goalIndex[0], goalIndex[1]);
+            newWall.GetComponent<Obstacle>()?.setterXZ(goalIndex[0], goalIndex[1]);
             changeMap(goalIndex[0], goalIndex[1], 3); //convert empty space to goal point
             tempEmptyList.RemoveAt(rnd);
         }

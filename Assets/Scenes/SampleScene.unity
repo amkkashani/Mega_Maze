@@ -420,7 +420,7 @@ Transform:
   m_GameObject: {fileID: 1299582132}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 20, y: 0.3, z: 20}
+  m_LocalScale: {x: 40, y: 0.3, z: 40}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -438,13 +438,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockSizeOfMap: 2
-  chanceOfEmptyWall: 10
+  chanceOfEmptyWall: 50
   EmptyWall: {fileID: 2307964883840762279, guid: 9de633e67f1706f45865710a7741c856, type: 3}
-  chanceOfNormallWall: 1
+  chanceOfNormallWall: 10
   normallWall: {fileID: 2143099084084103317, guid: 2cdc28bc08dc34348b5f838ee2c3dd4e, type: 3}
   chanceOfOnWayWall: 5
   oneWayWall: {fileID: 1895173277673449560, guid: 15baecdd774569842aa09b1cede45afa, type: 3}
-  numberOfGoals: 2
+  numberOfGoals: 3
   _goal: {fileID: 6119692456812564762, guid: 7c0cb22a6e65b3e40b33f272b1e07b62, type: 3}
   parentObj: {fileID: 776659947}
   player: {fileID: 455192649683255333, guid: b9e921653adca5b469987b49a1b2f96e, type: 3}

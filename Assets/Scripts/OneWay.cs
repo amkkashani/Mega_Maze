@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OneWay : Walls
+public class OneWay : Obstacle
 {
     [SerializeField] private Material _material;
     

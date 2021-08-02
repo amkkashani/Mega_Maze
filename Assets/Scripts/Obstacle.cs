@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Walls : MonoBehaviour
+public class Obstacle : MonoBehaviour
 {
     protected int x;
     protected int z;
