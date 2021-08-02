@@ -8,8 +8,12 @@ public class Goal : Obstacle
     {
         if (other.tag == "Player")
         {
-            other.GetComponent<Player>()?.getPoint(1);
+            other.GetComponent<Player>()?.addPoint(1);
             wallDestruction();
+            if (other.GetComponent<Player>().getPoint() == MapCreator.Instance.getNumberOfGoals())
+            {
+                //todo finish
+            }
         }
     }
 }

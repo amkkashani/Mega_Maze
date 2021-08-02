@@ -23,9 +23,16 @@ public class MapCreator : Singleton<MapCreator>
     [SerializeField]private Obstacle[,] map;
     private int[] _playerPos = new int[2];
     private List<int[]> emptyList;
+    private Vector3 originPivot;
 
+    public int getNumberOfGoals()
+    {
+        return numberOfGoals;
+    }
+    
     public void Awake()
     {
+        originPivot = transform.position;
         emptyList = new List<int[]>();
         // Debug.Log("debuged");
         x = (int) ((int) this.transform.localScale.x / blockSizeOfMap);
@@ -99,7 +106,7 @@ public class MapCreator : Singleton<MapCreator>
     public GameObject instanceInMap(GameObject obj, int i, int j, float Y_offset = 0f)
     {
         GameObject result = Instantiate(obj,
-            transform.position + new Vector3(i * blockSizeOfMap - x * blockSizeOfMap / 2 + blockSizeOfMap / 2,
+            originPivot + new Vector3(i * blockSizeOfMap - x * blockSizeOfMap / 2 + blockSizeOfMap / 2,
                 obj.transform.localScale.y / 2 + Y_offset,
                 j * blockSizeOfMap - z * blockSizeOfMap / 2 + blockSizeOfMap / 2), Quaternion.identity,
             parentObj.transform);

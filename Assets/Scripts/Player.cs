@@ -109,8 +109,13 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void getPoint(int value)
+    public void addPoint(int value)
     {
         this.points += value;
+    }
+
+    public int getPoint()
+    {
+        return points;
     }
 }
