@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2875412154436190037}
   - component: {fileID: 4140504496961349388}
   m_Layer: 0
-  m_Name: break
+  m_Name: NormalWall
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

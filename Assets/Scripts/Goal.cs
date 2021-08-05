@@ -10,7 +10,7 @@ public class Goal : Obstacle
         {
             other.GetComponent<Player>()?.addPoint(1);
             wallDestruction();
-            if (other.GetComponent<Player>().getPoint() == MapCreator.Instance.getNumberOfGoals())
+            if (other.GetComponent<Player>().getPoint() == map.getNumberOfGoals())
             {
                 //todo finish
             }

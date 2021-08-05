@@ -9,18 +9,28 @@ public class Player : MonoBehaviour
     [SerializeField] private float explosionRadius = 1f;
     [SerializeField] private int points = 0;
     [SerializeField] private int bombNumber = 5;
+    [SerializeField] private int ultimateNumber = 5;
+    [SerializeField] private GameObject ultimateEffect;
     
     private Vector3 finalTarget;
     private int[] posIndex;
+    private bool ultimateIsActive = false;
+
+    private Map map;
+
+    void Start()
+    {
+        ultimateEffect.SetActive(false);
+    }
     
-
-
-    public void setPos(Vector3 target, int[] posIndex, bool fast = false)
+    // when use fast == true you want to setup firs location of player and also you say player plays in which map 
+    public void setPos(Vector3 target, int[] posIndex, bool fast = false , Map map =null)
     {
         this.posIndex = posIndex;
         finalTarget = target;
         if (fast)
         {
+            this.map = map; //first time must pass the map object to function
             this.transform.position = target;
         }
 
@@ -42,29 +52,37 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
-            if (moveToIndex(posIndex[0], posIndex[1] + 1))
+            if (moveToIndex(posIndex[0], posIndex[1] + 1, ultimateIsActive))
             {
                 posIndex[1] += 1;
+                ultimateIsActive = false;
+                ultimateEffect.SetActive(false);
             }
         }
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
-            if (moveToIndex(posIndex[0], posIndex[1] - 1))
+            if (moveToIndex(posIndex[0], posIndex[1] - 1,ultimateIsActive))
             {
+                ultimateIsActive = false;
+                ultimateEffect.SetActive(false);
                 posIndex[1] -= 1;
             }
         }
         else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            if (moveToIndex(posIndex[0] - 1, posIndex[1]))
+            if (moveToIndex(posIndex[0] - 1, posIndex[1],ultimateIsActive))
             {
+                ultimateIsActive = false;
+                ultimateEffect.SetActive(false);
                 posIndex[0] -= 1;
             }
         }
         else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if (moveToIndex(posIndex[0] + 1, posIndex[1]))
+            if (moveToIndex(posIndex[0] + 1, posIndex[1],ultimateIsActive))
             {
+                ultimateIsActive = false;
+                ultimateEffect.SetActive(false);
                 posIndex[0] += 1;
             }
         }
@@ -76,18 +94,33 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Keypad0) && bombNumber != 0)
         {
-            bombNumber--;
-            destroyEnv();
+            
+            destroyEnvBomb();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Keypad1))
+        {
+            activeUltimate();
         }
     }
+
+    private void activeUltimate()
+    {
+        if (ultimateIsActive || ultimateNumber ==0)
+            return; // if ultimate is already active no need to turn it on
+        ultimateIsActive = true;
+        ultimateNumber--;
+        ultimateEffect.SetActive(true);
+    }
+    
 
     //
     //return true if possible
     //return false in case of index out of bound or collision with walls
-    private bool moveToIndex(int x, int z)
+    private bool moveToIndex(int x, int z , bool isUltimateActive)
     {
         // Debug.Log("i want go "+ x + " - "+ z);
-        Vector3? nextPos = MapCreator.Instance.calculatePosInMap(x, z, this.transform) + Vector3.up;
+        Vector3? nextPos = map.calculatePosInMap(x, z, this.transform,isUltimateActive) + Vector3.up;
         if (nextPos != null)
         {
             setPos(nextPos);
@@ -97,8 +130,9 @@ public class Player : MonoBehaviour
         return false;
     }
 
-    private void destroyEnv()
+    private void destroyEnvBomb()
     {
+        bombNumber--;
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
         foreach (var hitCollider in hitColliders)
         {
