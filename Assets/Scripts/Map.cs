@@ -92,35 +92,13 @@ public class Map : MonoBehaviour
             Obstacle[] obstacles = parentObj.GetComponentsInChildren<Obstacle>();
             for (int i = 0; i < obstacles.Length; i++)
             {
+                int[] res = findNearestPoint(obstacles[i].transform);
                 Transform obj = obstacles[i].transform;
-                int best_X = 0;
-                int best_Z = 0;
-                float best_distance = Mathf.Infinity; //todo
-                // find best x index
-                for (int j = 0; j < XSize; j++)
-                {
-                    float distance = Vector3.Distance(safeCalculatePosInPMap(j, 0, obj), obj.position);  
-                    if ( distance < best_distance)
-                    {
-                        best_distance = distance;//best distance is shortest distance
-                        best_X = j;
-                    }
-                }
+                int best_X = res[0];
+                int best_Z = res[1];
 
-                best_distance = Mathf.Infinity;
-                
-                //find best z index
-                for (int j = 0; j < zSize; j++)
-                {
-                    float distance = Vector3.Distance(safeCalculatePosInPMap(best_X, j, obj), obj.position);  
-                    if ( distance < best_distance)
-                    {
-                        best_distance = distance;//best distance is shortest distance
-                        best_Z = j;
-                    }
-                }
-                
                 obj.position = safeCalculatePosInPMap(best_X,best_Z,obj);
+                obstacles[i].setterXZ(res[0],res[1],this);
                 if(map[best_X, best_Z] == null){ // if the cell was empty , can add obstacle to the cell and 
                                                 //      and if not the cell will remove from the game map
                     map[best_X, best_Z] = obstacles[i]; 
@@ -130,8 +108,30 @@ public class Map : MonoBehaviour
                     Destroy(obstacles[i].gameObject);
                 }
             }
+            
+            //make empty object in null places
+            for (int i = 0; i < XSize; i++)
+            {
+                for (int j = 0; j < zSize; j++)
+                {
+                    if (map[i,j] == null)
+                    {
+                        GameObject newObj = instanceInMap(EmptyWall, i, j);
+                        map[i, j] = newObj.GetComponent<Obstacle>();
+                        newObj.GetComponent<Obstacle>().setterXZ(i, j, this);
+                    }
+                }
+            }
+            
+            //find the player
+            Player customPlayer = parentObj.GetComponentInChildren<Player>();
+            int[] start = findNearestPoint(customPlayer.transform);
+            customPlayer.setPos(safeCalculatePosInPMap(start[0],start[1],customPlayer.transform),start,map:this,fast:true);
+            
         }
     }
+    
+    
 
     private void choosePlayerStartPointAndGoals(int goalNumbers)
     {
@@ -200,6 +200,38 @@ public class Map : MonoBehaviour
         return originPivot + new Vector3(i * blockSizeOfMap - XSize * blockSizeOfMap / 2 + blockSizeOfMap / 2,
             0.15f + obj.transform.localScale.y / 2,
             j * blockSizeOfMap - zSize * blockSizeOfMap / 2 + blockSizeOfMap / 2);
+    }
+
+    private int[] findNearestPoint(Transform obj)
+    {
+        int best_X = 0;
+        int best_Z = 0;
+        float best_distance = Mathf.Infinity; //todo
+        // find best x index
+        for (int j = 0; j < XSize; j++)
+        {
+            float distance = Vector3.Distance(safeCalculatePosInPMap(j, 0, obj), obj.position);  
+            if ( distance < best_distance)
+            {
+                best_distance = distance;//best distance is shortest distance
+                best_X = j;
+            }
+        }
+
+        best_distance = Mathf.Infinity;
+                
+        //find best z index
+        for (int j = 0; j < zSize; j++)
+        {
+            float distance = Vector3.Distance(safeCalculatePosInPMap(best_X, j, obj), obj.position);  
+            if ( distance < best_distance)
+            {
+                best_distance = distance;//best distance is shortest distance
+                best_Z = j;
+            }
+        }
+
+        return new int[] {best_X, best_Z};
     }
 
     public void changeMap(int oldX, int oldY, int result)
