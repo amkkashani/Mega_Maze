@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
-
+[Serializable]
 public class Map : MonoBehaviour
 {
+    public int id = 1;
     [SerializeField] private float blockSizeOfMap = 1.0f;
     [SerializeField] private float chanceOfEmptyWall; //0
     [SerializeField] private GameObject EmptyWall;
@@ -129,6 +131,8 @@ public class Map : MonoBehaviour
             customPlayer.setPos(safeCalculatePosInPMap(start[0],start[1],customPlayer.transform),start,map:this,fast:true);
             
         }
+        GameManager.Instance.saveMap(1); //todo must remove 
+        GameManager.Instance.saveMap(2);
     }
     
     
@@ -263,5 +267,41 @@ public class Map : MonoBehaviour
     public int getNumberOfGoals()
     {
         return numberOfGoals;
+    }
+
+    public MapDataStruct GetMapDataStruct()
+    {
+        MapDataStruct res = new MapDataStruct();
+        res.id = this.id;
+        res.blockSize = blockSizeOfMap;
+        res.XSize = this.XSize;
+        res.ZSize = this.zSize;
+        List<int> states = new List<int>();
+        for (int i = 0; i < XSize; i++)
+        {
+            for (int j = 0; j < zSize; j++)
+            {
+                if (map[i, j] != null)
+                {
+                    if (map[i,j] is Empty)
+                    {
+                        states.Add(0);
+                    }else if ( map[i,j] is NormalWall)
+                    {
+                        states.Add(1);
+                    }else if(map[i,j] is OneWay)
+                    {
+                        states.Add(2);
+                    }else if (map[i,j] is Goal)
+                    {
+                        states.Add(3);
+                    }
+                }
+            }
+            
+        }
+
+        res.playerPos = this._playerPos;
+        return res;
     }
 }
