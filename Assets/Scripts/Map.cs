@@ -28,10 +28,10 @@ public class Map : MonoBehaviour
     private int XSize, zSize;
 
     [SerializeField] private Obstacle[,] map;
-    private int[] _playerPos = new int[2];
+    private int[] playerStartPos = null;
     private List<int[]> emptyList;
     private Vector3 originPivot;
-
+    [SerializeField]private bool loadedMap = false;
 
     public void Awake()
     {
@@ -45,6 +45,10 @@ public class Map : MonoBehaviour
 
     public void Start()
     {
+        if (loadedMap)
+        {
+            return;
+        }
         if (isRandomMap)
         {
             // random map
@@ -129,10 +133,38 @@ public class Map : MonoBehaviour
             Player customPlayer = parentObj.GetComponentInChildren<Player>();
             int[] start = findNearestPoint(customPlayer.transform);
             customPlayer.setPos(safeCalculatePosInPMap(start[0],start[1],customPlayer.transform),start,map:this,fast:true);
-            
+            playerStartPos = start;
         }
-        GameManager.Instance.saveMap(1); //todo must remove 
-        GameManager.Instance.saveMap(2);
+        // GameManager.Instance.saveMap(1); //todo must remove 
+        // GameManager.Instance.saveMap(2);
+    }
+
+    //this function must called when instance map from save system
+    public void setupMapByStruct(MapDataStruct structData)
+    {
+        GameManager.checkMaxId(structData.id);
+        XSize = structData.XSize;
+        zSize = structData.ZSize;
+        blockSizeOfMap = structData.blockSize;
+        transform.localScale = new Vector3(XSize * blockSizeOfMap, 0.3f, zSize *blockSizeOfMap);
+
+
+        //make all blocks
+        for (int i = 0; i < structData.blocksStates.Count; i++)
+        {
+            int x = i / XSize;
+            int z = i % XSize;
+            changeMap(x,z,structData.blocksStates[i]);
+        }
+        
+        //make the player
+        int[] start = structData.playerPos.ToArray();
+        GameObject _playerObj = instanceInMap(player, start[0], start[1]);
+        playerStartPos = start;
+        _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
+        _playerObj.GetComponent<Player>()
+            .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
+                this);
     }
     
     
@@ -144,6 +176,9 @@ public class Map : MonoBehaviour
         int[] start = tempEmptyList[rnd];
         tempEmptyList.RemoveAt(rnd);
         GameObject _playerObj = instanceInMap(player, start[0], start[1]);
+        playerStartPos = start;
+        Debug.Log("started at" + playerStartPos[0] +" -- "+playerStartPos[1]);
+        
         _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
         _playerObj.GetComponent<Player>()
             .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
@@ -241,7 +276,9 @@ public class Map : MonoBehaviour
     public void changeMap(int oldX, int oldY, int result)
     {
         GameObject newObj = null;
-        Destroy(map[oldX, oldY].gameObject);
+        if (map[oldX,oldY]!=null)
+            Destroy(map[oldX, oldY].gameObject);
+        Debug.Log(result + "-- " + result.GetType());
         switch (result)
         {
             case 0:
@@ -300,8 +337,8 @@ public class Map : MonoBehaviour
             }
             
         }
-
-        res.playerPos = this._playerPos;
+        res.blocksStates = states;
+        res.playerPos = playerStartPos.ToList();
         return res;
     }
 }
