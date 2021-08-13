@@ -139,7 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2be2d02f6cf722b458ed45c04a9d4690, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 1
+  id: 0
   blockSizeOfMap: 2
   chanceOfEmptyWall: 10
   EmptyWall: {fileID: 2307964883840762279, guid: 9de633e67f1706f45865710a7741c856, type: 3}

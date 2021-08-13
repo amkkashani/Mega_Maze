@@ -13,12 +13,23 @@ public class GameManager : Singleton<GameManager>
     public ListOfMapsStruct ListOfMapsStruct = new ListOfMapsStruct();
     private static int maxId = 1;
     [SerializeField] private float mapDistance = 50;
-    
+    public int removeId;
     void Awake()
     {
         // load
         ListOfMapsStruct = loadMapsStructs();
         Debug.Log("here : " + ListOfMapsStruct._structsMap.Count );
+        
+        //find maxid that has been saved 
+        for (int i = 0; i < ListOfMapsStruct._structsMap.Count; i++)
+        {
+            MapDataStruct mapDataStruct = ListOfMapsStruct._structsMap[i];
+            if (mapDataStruct.id >= maxId)
+            {
+                maxId = mapDataStruct.id + 1;
+            }
+        }
+        
         if (loadFromSavedData)
         {
             for (int i = 0; i < ListOfMapsStruct._structsMap.Count; i++)
@@ -32,6 +43,23 @@ public class GameManager : Singleton<GameManager>
                 
             }    
         }
+        
+    }
+
+    public void removeSavedId(int id)
+    {
+        for (int i = 0; i < ListOfMapsStruct._structsMap.Count; i++)
+        {
+            if (ListOfMapsStruct._structsMap[i].id == id)
+            {
+                ListOfMapsStruct._structsMap.RemoveAt(i);
+                break;
+            }
+        }
+        
+        string savedString = ListOfMapsStruct.ToJson();
+        Debug.Log(savedString);
+        FileManager.WriteToFile("mapSetting", savedString);
         
     }
 
@@ -84,7 +112,7 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    public static int getId(int id)
+    public static int getId()
     {
         int res = GameManager.maxId;
         GameManager.maxId++;

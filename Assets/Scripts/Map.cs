@@ -8,7 +8,9 @@ using Random = UnityEngine.Random;
 [Serializable]
 public class Map : MonoBehaviour
 {
-    public int id = 1;
+    //never change id in inspector
+    public int id = 0;  //when maps request to say if have already a id use that and if dont have id it will get id from Game manager 
+    //zero id means id is not define yet
     [SerializeField] private float blockSizeOfMap = 1.0f;
     [SerializeField] private float chanceOfEmptyWall; //0
     [SerializeField] private GameObject EmptyWall;
@@ -143,6 +145,7 @@ public class Map : MonoBehaviour
     public void setupMapByStruct(MapDataStruct structData)
     {
         GameManager.checkMaxId(structData.id);
+        this.id = structData.id;
         XSize = structData.XSize;
         zSize = structData.ZSize;
         blockSizeOfMap = structData.blockSize;
@@ -340,5 +343,16 @@ public class Map : MonoBehaviour
         res.blocksStates = states;
         res.playerPos = playerStartPos.ToList();
         return res;
+    }
+
+    public void saveMap()
+    {
+        if (id == 0)
+        {
+            //it means we need to get id from game manager
+            this.id = GameManager.getId();
+        }
+        
+        GameManager.Instance.saveMap(id);
     }
 }
