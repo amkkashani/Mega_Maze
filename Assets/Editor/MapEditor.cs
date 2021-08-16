@@ -15,6 +15,14 @@ public class MapEditor : Editor
         {
             myScript.saveMap();
         }
+        if(GUILayout.Button("save this map as new"))
+        {
+            myScript.saveAsNew();
+        }
+        if(GUILayout.Button("reset this map"))
+        {
+            myScript.resetMap();
+        }
     }
     
 }

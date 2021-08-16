@@ -40,7 +40,6 @@ public class GameManager : Singleton<GameManager>
                 Map newMap = newObj.GetComponent<Map>();
                 _maps.Add(newMap);
                 newMap.setupMapByStruct(mapDataStruct);
-                
             }    
         }
         
@@ -143,6 +142,8 @@ public struct MapDataStruct
     public int id;
     public int XSize;
     public int ZSize;
+    public int bombNumber;
+    public int ultimateNumber;
     public float blockSize;
     public List<int> blocksStates;
     public List<int> playerPos;

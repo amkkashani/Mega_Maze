@@ -22,6 +22,19 @@ public class Player : MonoBehaviour
     {
         ultimateEffect.SetActive(false);
     }
+
+    public void getUltimateAndBombNumber(ref int ultimate , ref int bombNumber)
+    {
+        ultimate = this.ultimateNumber;
+        bombNumber = this.bombNumber;
+    }
+
+    public void setUltimateAndBombNumber(int ultimate, int bombNumber)
+    {
+        this.ultimateNumber = ultimate;
+        this.bombNumber = bombNumber;
+    }
+    
     
     // when use fast == true you want to setup firs location of player and also you say player plays in which map 
     public void setPos(Vector3 target, int[] posIndex, bool fast = false , Map map =null)

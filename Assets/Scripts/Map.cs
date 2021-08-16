@@ -23,18 +23,20 @@ public class Map : MonoBehaviour
 
     [SerializeField] private GameObject parentObj;
 
-    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject playerGameObject;
 
     [SerializeField] private bool isRandomMap = true;
 
     private int XSize, zSize;
-
-    [SerializeField] private Obstacle[,] map;
     private int[] playerStartPos = null;
     private List<int[]> emptyList;
     private Vector3 originPivot;
+    private MapDataStruct intiDataStruct;
+    private Transform myPlayeTransform;
+    
+    [SerializeField] private Obstacle[,] map;
     [SerializeField]private bool loadedMap = false;
-
+    
     public void Awake()
     {
         originPivot = transform.position;
@@ -133,6 +135,7 @@ public class Map : MonoBehaviour
             
             //find the player
             Player customPlayer = parentObj.GetComponentInChildren<Player>();
+            myPlayeTransform = customPlayer.transform;
             int[] start = findNearestPoint(customPlayer.transform);
             customPlayer.setPos(safeCalculatePosInPMap(start[0],start[1],customPlayer.transform),start,map:this,fast:true);
             playerStartPos = start;
@@ -144,6 +147,7 @@ public class Map : MonoBehaviour
     //this function must called when instance map from save system
     public void setupMapByStruct(MapDataStruct structData)
     {
+        intiDataStruct = structData;
         GameManager.checkMaxId(structData.id);
         this.id = structData.id;
         XSize = structData.XSize;
@@ -162,14 +166,47 @@ public class Map : MonoBehaviour
         
         //make the player
         int[] start = structData.playerPos.ToArray();
-        GameObject _playerObj = instanceInMap(player, start[0], start[1]);
+        GameObject _playerObj = instanceInMap(playerGameObject, start[0], start[1]);
+        myPlayeTransform = _playerObj.transform;
         playerStartPos = start;
-        _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
-        _playerObj.GetComponent<Player>()
+        Player tempPlayer = _playerObj.GetComponent<Player>();
+        // _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
+        tempPlayer
             .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
                 this);
+        tempPlayer.setUltimateAndBombNumber(structData.ultimateNumber,structData.bombNumber);
     }
-    
+
+    public void resetMap()
+    {
+        int[] start = intiDataStruct.playerPos.ToArray();
+        
+        for (int i = 0; i < XSize; i++)
+        {
+            for (int j = 0; j < zSize; j++)
+            {
+                Destroy(map[i,j].gameObject);
+            }
+            
+        }
+        
+        
+        for (int i = 0; i < intiDataStruct.blocksStates.Count; i++)
+        {
+            int x = i / XSize;
+            int z = i % XSize;
+            changeMap(x,z,intiDataStruct.blocksStates[i]);
+        }
+        if (!intiDataStruct.Equals(default(MapDataStruct)))
+        {
+            Player _player = parentObj.GetComponentInChildren<Player>();
+            _player.setUltimateAndBombNumber(intiDataStruct.ultimateNumber,intiDataStruct.bombNumber);
+            _player.GetComponent<Player>()
+                .setPos((Vector3) calculatePosInMap(start[0], start[1], _player.transform) + Vector3.up, start, true,
+                    this);
+        }
+        
+    }
     
 
     private void choosePlayerStartPointAndGoals(int goalNumbers)
@@ -178,11 +215,12 @@ public class Map : MonoBehaviour
         int rnd = Random.Range(0, tempEmptyList.Count);
         int[] start = tempEmptyList[rnd];
         tempEmptyList.RemoveAt(rnd);
-        GameObject _playerObj = instanceInMap(player, start[0], start[1]);
+        GameObject _playerObj = instanceInMap(playerGameObject, start[0], start[1]);
+        myPlayeTransform = _playerObj.transform;
         playerStartPos = start;
         Debug.Log("started at" + playerStartPos[0] +" -- "+playerStartPos[1]);
         
-        _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
+        // _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
         _playerObj.GetComponent<Player>()
             .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
                 this);
@@ -316,6 +354,7 @@ public class Map : MonoBehaviour
         res.blockSize = blockSizeOfMap;
         res.XSize = this.XSize;
         res.ZSize = this.zSize;
+        myPlayeTransform.GetComponent<Player>().getUltimateAndBombNumber(ref res.ultimateNumber,ref res.bombNumber);
         List<int> states = new List<int>();
         for (int i = 0; i < XSize; i++)
         {
@@ -353,6 +392,12 @@ public class Map : MonoBehaviour
             this.id = GameManager.getId();
         }
         
+        GameManager.Instance.saveMap(id);
+    }
+
+    public void saveAsNew()
+    {
+        this.id = GameManager.getId();
         GameManager.Instance.saveMap(id);
     }
 }

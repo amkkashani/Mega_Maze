@@ -150,6 +150,6 @@ MonoBehaviour:
   numberOfGoals: 2
   _goal: {fileID: 6119692456812564762, guid: 7c0cb22a6e65b3e40b33f272b1e07b62, type: 3}
   parentObj: {fileID: 391978316554400619}
-  player: {fileID: 455192649683255333, guid: b9e921653adca5b469987b49a1b2f96e, type: 3}
+  playerGameObject: {fileID: 455192649683255333, guid: b9e921653adca5b469987b49a1b2f96e, type: 3}
   isRandomMap: 0
   loadedMap: 1
