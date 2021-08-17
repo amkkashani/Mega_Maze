@@ -73,7 +73,6 @@ public class GameManager : Singleton<GameManager>
                 break;
             }
         }
-        
         // extract data from map
         for (int i = 0; i < _maps.Count; i++)
         {

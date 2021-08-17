@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.MLAgents;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Agent
 {
     [SerializeField] private float minmumAcceptableDistance = 0.1f;
     [SerializeField] private float reachSpeedFactor = 0.05f;
@@ -63,57 +64,159 @@ public class Player : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            if (moveToIndex(posIndex[0], posIndex[1] + 1, ultimateIsActive))
-            {
-                posIndex[1] += 1;
-                ultimateIsActive = false;
-                ultimateEffect.SetActive(false);
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            if (moveToIndex(posIndex[0], posIndex[1] - 1,ultimateIsActive))
-            {
-                ultimateIsActive = false;
-                ultimateEffect.SetActive(false);
-                posIndex[1] -= 1;
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            if (moveToIndex(posIndex[0] - 1, posIndex[1],ultimateIsActive))
-            {
-                ultimateIsActive = false;
-                ultimateEffect.SetActive(false);
-                posIndex[0] -= 1;
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            if (moveToIndex(posIndex[0] + 1, posIndex[1],ultimateIsActive))
-            {
-                ultimateIsActive = false;
-                ultimateEffect.SetActive(false);
-                posIndex[0] += 1;
-            }
-        }
-
+        //try to reach at target  point 
         if (Vector3.Distance(transform.position, finalTarget) > minmumAcceptableDistance)
         {
             transform.Translate((finalTarget - transform.position) * reachSpeedFactor);
         }
+    }
 
-        if (Input.GetKeyDown(KeyCode.Keypad0) && bombNumber != 0)
+    // public void Update()
+    // {
+        // if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        // {
+        //     if (moveToIndex(posIndex[0], posIndex[1] + 1, ultimateIsActive))
+        //     {
+        //         posIndex[1] += 1;
+        //         ultimateIsActive = false;
+        //         ultimateEffect.SetActive(false);
+        //     }
+        // }
+        // else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        // {
+        //     if (moveToIndex(posIndex[0], posIndex[1] - 1,ultimateIsActive))
+        //     {
+        //         ultimateIsActive = false;
+        //         ultimateEffect.SetActive(false);
+        //         posIndex[1] -= 1;
+        //     }
+        // }
+        // else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        // {
+        //     if (moveToIndex(posIndex[0] - 1, posIndex[1],ultimateIsActive))
+        //     {
+        //         ultimateIsActive = false;
+        //         ultimateEffect.SetActive(false);
+        //         posIndex[0] -= 1;
+        //     }
+        // }
+        // else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        // {
+        //     if (moveToIndex(posIndex[0] + 1, posIndex[1],ultimateIsActive))
+        //     {
+        //         ultimateIsActive = false;
+        //         ultimateEffect.SetActive(false);
+        //         posIndex[0] += 1;
+        //     }
+        // }
+        //
+        // if (Vector3.Distance(transform.position, finalTarget) > minmumAcceptableDistance)
+        // {
+        //     transform.Translate((finalTarget - transform.position) * reachSpeedFactor);
+        // }
+        //
+        // if (Input.GetKeyDown(KeyCode.Keypad0) && bombNumber != 0)
+        // {
+        //     
+        //     destroyEnvBomb();
+        // }
+        //
+        // if (Input.GetKeyDown(KeyCode.Keypad1))
+        // {
+        //     activeUltimate();
+        // }
+    // }
+
+    public override void OnActionReceived(float[] vectorAction)
+    {
+        switch (vectorAction[0])
         {
+            case 0:  //do nothing
+                break;
+            case 1:  //go up
+                if (moveToIndex(posIndex[0], posIndex[1] + 1, ultimateIsActive))
+                {
+                    posIndex[1] += 1;
+                    ultimateIsActive = false;
+                    ultimateEffect.SetActive(false);
+                }    
+                break;
             
-            destroyEnvBomb();
+            case 2: // go right
+                if (moveToIndex(posIndex[0] + 1, posIndex[1],ultimateIsActive))
+                {
+                    ultimateIsActive = false;
+                    ultimateEffect.SetActive(false);
+                    posIndex[0] += 1;
+                }    
+                break;
+            case 3: // go down
+                if (moveToIndex(posIndex[0], posIndex[1] - 1,ultimateIsActive))
+                {
+                    ultimateIsActive = false;
+                    ultimateEffect.SetActive(false);
+                    posIndex[1] -= 1;
+                }
+                break;
+            case 4: // go left
+                if (moveToIndex(posIndex[0] - 1, posIndex[1],ultimateIsActive))
+                {
+                    ultimateIsActive = false;
+                    ultimateEffect.SetActive(false);
+                    posIndex[0] -= 1;
+                }    
+                break;
         }
 
-        if (Input.GetKeyDown(KeyCode.Keypad1))
+        if (vectorAction[1] == 1)
         {
             activeUltimate();
+        }
+
+        if (vectorAction[2] == 1)
+        {
+            destroyEnvBomb();
+        }
+    }
+
+    public override void Heuristic(float[] actionsOut)
+    {
+        //action
+        // index [0]=>  0: stay , up:1 , right : 2 ,down :3 , left :4 
+        // index [1]=> 0:not to do , 1: activate the ultimate
+        // index [2]=> 0:not to do , 1: activate the bomb
+        // by default we do nothing
+        actionsOut[0] = 0;
+        actionsOut[1] = 0;
+        actionsOut[2] = 0;
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        {
+            actionsOut[0] = 1;
+            
+        }
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        {
+            actionsOut[0] = 3;
+        }
+        else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            actionsOut[0] = 4;
+            
+        }
+        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            actionsOut[0] = 2;
+            
+        }
+        if (Input.GetKey(KeyCode.Keypad0) && bombNumber != 0)
+        {
+            actionsOut[2] = 1;
+            
+        }
+
+        if (Input.GetKey(KeyCode.Keypad1))
+        {
+            actionsOut[1] = 1;
         }
     }
 
@@ -126,8 +229,7 @@ public class Player : MonoBehaviour
         ultimateEffect.SetActive(true);
     }
     
-
-    //
+    
     //return true if possible
     //return false in case of index out of bound or collision with walls
     private bool moveToIndex(int x, int z , bool isUltimateActive)
