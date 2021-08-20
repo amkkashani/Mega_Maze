@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.MLAgents;
+using Unity.MLAgents.Sensors;
 using UnityEngine;
 
 public class Player : Agent
@@ -177,6 +178,8 @@ public class Player : Agent
         {
             destroyEnvBomb();
         }
+        
+        AddReward(-50.0f/MaxStep);
     }
 
     public override void Heuristic(float[] actionsOut)
@@ -257,10 +260,39 @@ public class Player : Agent
             }
         }
     }
+    
+    
+
+    public override void OnEpisodeBegin()
+    {
+        map.resetMap();
+    }
 
     public void addPoint(int value)
     {
         this.points += value;
+        AddReward(100);
+        if (map.getNumberOfGoals() == points)
+        {
+            //end episode 
+            EndEpisode();
+            
+        }
+        
+        
+    }
+    
+    
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        List<int> states = map.mapStatesAsInt();
+        for (int i = 0; i < states.Count; i++)
+        {
+            sensor.AddObservation(states[i]);
+        }
+        sensor.AddObservation(posIndex[0]);
+        sensor.AddObservation(posIndex[1]);
+        sensor.AddObservation(ultimateIsActive?1:0);
     }
 
     public int getPoint()

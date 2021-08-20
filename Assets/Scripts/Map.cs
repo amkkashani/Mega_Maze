@@ -5,11 +5,14 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
+
 [Serializable]
 public class Map : MonoBehaviour
 {
     //never change id in inspector
-    public int id = 0;  //when maps request to say if have already a id use that and if dont have id it will get id from Game manager 
+    public int
+        id = 0; //when maps request to say if have already a id use that and if dont have id it will get id from Game manager 
+
     //zero id means id is not define yet
     [SerializeField] private float blockSizeOfMap = 1.0f;
     [SerializeField] private float chanceOfEmptyWall; //0
@@ -33,10 +36,10 @@ public class Map : MonoBehaviour
     private Vector3 originPivot;
     private MapDataStruct intiDataStruct;
     private Transform myPlayeTransform;
-    
+
     [SerializeField] private Obstacle[,] map;
-    [SerializeField]private bool loadedMap = false;
-    
+    [SerializeField] private bool loadedMap = false;
+
     public void Awake()
     {
         originPivot = transform.position;
@@ -53,6 +56,7 @@ public class Map : MonoBehaviour
         {
             return;
         }
+
         if (isRandomMap)
         {
             // random map
@@ -94,11 +98,12 @@ public class Map : MonoBehaviour
         else
         {
             //custom map
-            if (XSize ==0 || zSize ==0)
+            if (XSize == 0 || zSize == 0)
             {
                 Debug.LogError(" one of dimensions in map is zero");
                 return;
             }
+
             Obstacle[] obstacles = parentObj.GetComponentsInChildren<Obstacle>();
             for (int i = 0; i < obstacles.Length; i++)
             {
@@ -107,24 +112,26 @@ public class Map : MonoBehaviour
                 int best_X = res[0];
                 int best_Z = res[1];
 
-                obj.position = safeCalculatePosInPMap(best_X,best_Z,obj);
-                obstacles[i].setterXZ(res[0],res[1],this);
-                if(map[best_X, best_Z] == null){ // if the cell was empty , can add obstacle to the cell and 
-                                                //      and if not the cell will remove from the game map
-                    map[best_X, best_Z] = obstacles[i]; 
+                obj.position = safeCalculatePosInPMap(best_X, best_Z, obj);
+                obstacles[i].setterXZ(res[0], res[1], this);
+                if (map[best_X, best_Z] == null)
+                {
+                    // if the cell was empty , can add obstacle to the cell and 
+                    //      and if not the cell will remove from the game map
+                    map[best_X, best_Z] = obstacles[i];
                 }
                 else
                 {
                     Destroy(obstacles[i].gameObject);
                 }
             }
-            
+
             //make empty object in null places
             for (int i = 0; i < XSize; i++)
             {
                 for (int j = 0; j < zSize; j++)
                 {
-                    if (map[i,j] == null)
+                    if (map[i, j] == null)
                     {
                         GameObject newObj = instanceInMap(EmptyWall, i, j);
                         map[i, j] = newObj.GetComponent<Obstacle>();
@@ -132,12 +139,13 @@ public class Map : MonoBehaviour
                     }
                 }
             }
-            
+
             //find the player
             Player customPlayer = parentObj.GetComponentInChildren<Player>();
             myPlayeTransform = customPlayer.transform;
             int[] start = findNearestPoint(customPlayer.transform);
-            customPlayer.setPos(safeCalculatePosInPMap(start[0],start[1],customPlayer.transform),start,map:this,fast:true);
+            customPlayer.setPos(safeCalculatePosInPMap(start[0], start[1], customPlayer.transform), start, map: this,
+                fast: true);
             playerStartPos = start;
         }
         // GameManager.Instance.saveMap(1); //todo must remove 
@@ -147,13 +155,14 @@ public class Map : MonoBehaviour
     //this function must called when instance map from save system
     public void setupMapByStruct(MapDataStruct structData)
     {
+        numberOfGoals = 0;
         intiDataStruct = structData;
         GameManager.checkMaxId(structData.id);
         this.id = structData.id;
         XSize = structData.XSize;
         zSize = structData.ZSize;
         blockSizeOfMap = structData.blockSize;
-        transform.localScale = new Vector3(XSize * blockSizeOfMap, 0.3f, zSize *blockSizeOfMap);
+        transform.localScale = new Vector3(XSize * blockSizeOfMap, 0.3f, zSize * blockSizeOfMap);
 
 
         //make all blocks
@@ -161,9 +170,13 @@ public class Map : MonoBehaviour
         {
             int x = i / XSize;
             int z = i % XSize;
-            changeMap(x,z,structData.blocksStates[i]);
+            changeMap(x, z, structData.blocksStates[i]);
+            if (structData.blocksStates[i] == 3)
+            {
+                numberOfGoals++;
+            }
         }
-        
+
         //make the player
         int[] start = structData.playerPos.ToArray();
         GameObject _playerObj = instanceInMap(playerGameObject, start[0], start[1]);
@@ -174,40 +187,43 @@ public class Map : MonoBehaviour
         tempPlayer
             .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
                 this);
-        tempPlayer.setUltimateAndBombNumber(structData.ultimateNumber,structData.bombNumber);
+        tempPlayer.setUltimateAndBombNumber(structData.ultimateNumber, structData.bombNumber);
     }
 
+    //reset just use for maps that loaded from save file 
     public void resetMap()
     {
+        if (intiDataStruct.Equals(default(MapDataStruct)))
+        {
+            Debug.Log("this map cant be reset");
+            return;
+        }
+
         int[] start = intiDataStruct.playerPos.ToArray();
-        
+
         for (int i = 0; i < XSize; i++)
         {
             for (int j = 0; j < zSize; j++)
             {
-                Destroy(map[i,j].gameObject);
+                Destroy(map[i, j].gameObject);
             }
-            
         }
-        
-        
+
+
         for (int i = 0; i < intiDataStruct.blocksStates.Count; i++)
         {
             int x = i / XSize;
             int z = i % XSize;
-            changeMap(x,z,intiDataStruct.blocksStates[i]);
+            changeMap(x, z, intiDataStruct.blocksStates[i]);
         }
-        if (!intiDataStruct.Equals(default(MapDataStruct)))
-        {
-            Player _player = parentObj.GetComponentInChildren<Player>();
-            _player.setUltimateAndBombNumber(intiDataStruct.ultimateNumber,intiDataStruct.bombNumber);
-            _player.GetComponent<Player>()
-                .setPos((Vector3) calculatePosInMap(start[0], start[1], _player.transform) + Vector3.up, start, true,
-                    this);
-        }
-        
+
+        Player _player = parentObj.GetComponentInChildren<Player>();
+        _player.setUltimateAndBombNumber(intiDataStruct.ultimateNumber, intiDataStruct.bombNumber);
+        _player.GetComponent<Player>()
+            .setPos((Vector3) calculatePosInMap(start[0], start[1], _player.transform) + Vector3.up, start, true,
+                this);
     }
-    
+
 
     private void choosePlayerStartPointAndGoals(int goalNumbers)
     {
@@ -218,8 +234,8 @@ public class Map : MonoBehaviour
         GameObject _playerObj = instanceInMap(playerGameObject, start[0], start[1]);
         myPlayeTransform = _playerObj.transform;
         playerStartPos = start;
-        Debug.Log("started at" + playerStartPos[0] +" -- "+playerStartPos[1]);
-        
+        Debug.Log("started at" + playerStartPos[0] + " -- " + playerStartPos[1]);
+
         // _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
         _playerObj.GetComponent<Player>()
             .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
@@ -275,7 +291,7 @@ public class Map : MonoBehaviour
             j * blockSizeOfMap - zSize * blockSizeOfMap / 2 + blockSizeOfMap / 2);
     }
 
-    private Vector3 safeCalculatePosInPMap(int i , int j , Transform obj)
+    private Vector3 safeCalculatePosInPMap(int i, int j, Transform obj)
     {
         return originPivot + new Vector3(i * blockSizeOfMap - XSize * blockSizeOfMap / 2 + blockSizeOfMap / 2,
             0.15f + obj.transform.localScale.y / 2,
@@ -290,23 +306,23 @@ public class Map : MonoBehaviour
         // find best x index
         for (int j = 0; j < XSize; j++)
         {
-            float distance = Vector3.Distance(safeCalculatePosInPMap(j, 0, obj), obj.position);  
-            if ( distance < best_distance)
+            float distance = Vector3.Distance(safeCalculatePosInPMap(j, 0, obj), obj.position);
+            if (distance < best_distance)
             {
-                best_distance = distance;//best distance is shortest distance
+                best_distance = distance; //best distance is shortest distance
                 best_X = j;
             }
         }
 
         best_distance = Mathf.Infinity;
-                
+
         //find best z index
         for (int j = 0; j < zSize; j++)
         {
-            float distance = Vector3.Distance(safeCalculatePosInPMap(best_X, j, obj), obj.position);  
-            if ( distance < best_distance)
+            float distance = Vector3.Distance(safeCalculatePosInPMap(best_X, j, obj), obj.position);
+            if (distance < best_distance)
             {
-                best_distance = distance;//best distance is shortest distance
+                best_distance = distance; //best distance is shortest distance
                 best_Z = j;
             }
         }
@@ -317,7 +333,7 @@ public class Map : MonoBehaviour
     public void changeMap(int oldX, int oldY, int result)
     {
         GameObject newObj = null;
-        if (map[oldX,oldY]!=null)
+        if (map[oldX, oldY] != null)
             Destroy(map[oldX, oldY].gameObject);
         Debug.Log(result + "-- " + result.GetType());
         switch (result)
@@ -354,7 +370,16 @@ public class Map : MonoBehaviour
         res.blockSize = blockSizeOfMap;
         res.XSize = this.XSize;
         res.ZSize = this.zSize;
-        myPlayeTransform.GetComponent<Player>().getUltimateAndBombNumber(ref res.ultimateNumber,ref res.bombNumber);
+        myPlayeTransform.GetComponent<Player>().getUltimateAndBombNumber(ref res.ultimateNumber, ref res.bombNumber);
+        List<int> states = mapStatesAsInt();
+        
+        res.blocksStates = states;
+        res.playerPos = playerStartPos.ToList();
+        return res;
+    }
+
+    public List<int> mapStatesAsInt()
+    {
         List<int> states = new List<int>();
         for (int i = 0; i < XSize; i++)
         {
@@ -362,26 +387,27 @@ public class Map : MonoBehaviour
             {
                 if (map[i, j] != null)
                 {
-                    if (map[i,j] is Empty)
+                    if (map[i, j] is Empty)
                     {
                         states.Add(0);
-                    }else if ( map[i,j] is NormalWall)
+                    }
+                    else if (map[i, j] is NormalWall)
                     {
                         states.Add(1);
-                    }else if(map[i,j] is OneWay)
+                    }
+                    else if (map[i, j] is OneWay)
                     {
                         states.Add(2);
-                    }else if (map[i,j] is Goal)
+                    }
+                    else if (map[i, j] is Goal)
                     {
                         states.Add(3);
                     }
                 }
             }
-            
         }
-        res.blocksStates = states;
-        res.playerPos = playerStartPos.ToList();
-        return res;
+
+        return states;
     }
 
     public void saveMap()
@@ -391,7 +417,7 @@ public class Map : MonoBehaviour
             //it means we need to get id from game manager
             this.id = GameManager.getId();
         }
-        
+
         GameManager.Instance.saveMap(id);
     }
 
