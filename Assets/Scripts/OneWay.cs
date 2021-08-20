@@ -6,7 +6,7 @@ public class OneWay : Obstacle
 {
     void OnTriggerExit(Collider other)
     {
-        Debug.Log(other.tag);
+        // Debug.Log(other.tag);
         if (other.tag == "Player")
         {
             changeToNormallWall();

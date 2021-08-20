@@ -27,10 +27,13 @@ public class Obstacle : MonoBehaviour
         map.changeMap(x,z,1  );
     }
 
+    
+    
     public void wallDestruction()
     {
         map.changeMap(x,z,0);
         Destroy(Instantiate(afterDestroyed, transform.position,
             Quaternion.identity), 2);
+        // Debug.Log(x +" --" + z);
     }
 }

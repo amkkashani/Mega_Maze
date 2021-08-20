@@ -7,6 +7,7 @@ using UnityEngine;
 [System.Serializable]
 public class GameManager : Singleton<GameManager>
 {
+    // public bool learningMode = true;
     [SerializeField] private GameObject mapObj;
     [SerializeField] private List<Map> _maps;
     [SerializeField] private bool loadFromSavedData;
@@ -18,7 +19,7 @@ public class GameManager : Singleton<GameManager>
     {
         // load
         ListOfMapsStruct = loadMapsStructs();
-        Debug.Log("here : " + ListOfMapsStruct._structsMap.Count );
+        // Debug.Log("here : " + ListOfMapsStruct._structsMap.Count );
         
         //find maxid that has been saved 
         for (int i = 0; i < ListOfMapsStruct._structsMap.Count; i++)

@@ -250,6 +250,10 @@ public class Player : Agent
 
     private void destroyEnvBomb()
     {
+        if (bombNumber == 0)
+        {
+            return; 
+        }
         bombNumber--;
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
         foreach (var hitCollider in hitColliders)
@@ -265,16 +269,26 @@ public class Player : Agent
 
     public override void OnEpisodeBegin()
     {
+        // Debug.Log("i get point");
         map.resetMap();
+    }
+
+    public void resetPoint()
+    {
+        points = 0;
     }
 
     public void addPoint(int value)
     {
         this.points += value;
-        AddReward(100);
+        AddReward(value*100);
         if (map.getNumberOfGoals() == points)
         {
             //end episode 
+            Debug.Log("end episod");
+            // Debug.Log(posIndex[0] +" -- " + posIndex[1]);
+            resetPoint();
+            map.resetMap();
             EndEpisode();
             
         }
@@ -292,6 +306,8 @@ public class Player : Agent
         }
         sensor.AddObservation(posIndex[0]);
         sensor.AddObservation(posIndex[1]);
+        sensor.AddObservation(bombNumber);
+        sensor.AddObservation(ultimateNumber);
         sensor.AddObservation(ultimateIsActive?1:0);
     }
 

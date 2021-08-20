@@ -152,6 +152,20 @@ public class Map : MonoBehaviour
         // GameManager.Instance.saveMap(2);
     }
 
+    //just for test 
+    public int checkCell(int x , int z)
+    {
+        if (map[x,z] is Goal )
+        {
+            return 3;
+        }else if (map[x, z] is NormalWall)
+        {
+            return 1;
+        }
+
+        return 0;
+
+    }
     //this function must called when instance map from save system
     public void setupMapByStruct(MapDataStruct structData)
     {
@@ -193,35 +207,48 @@ public class Map : MonoBehaviour
     //reset just use for maps that loaded from save file 
     public void resetMap()
     {
+        // for (int i = 0; i < XSize; i++)
+        // {
+        //     for (int j = 0; j < zSize; j++)
+        //     {
+        //         Destroy(map[i, j].gameObject);
+        //     }
+        // }
+        // Destroy(myPlayeTransform.gameObject);
+        // setupMapByStruct(intiDataStruct);
+        Collider collider = myPlayeTransform.GetComponent<CapsuleCollider>();
+        collider.enabled = false;
+        
+        
         if (intiDataStruct.Equals(default(MapDataStruct)))
         {
             Debug.Log("this map cant be reset");
             return;
         }
-
+        
         int[] start = intiDataStruct.playerPos.ToArray();
-
-        for (int i = 0; i < XSize; i++)
-        {
-            for (int j = 0; j < zSize; j++)
-            {
-                Destroy(map[i, j].gameObject);
-            }
-        }
+        
+        
+        Player _player = myPlayeTransform.GetComponent<Player>();
+        _player.setUltimateAndBombNumber(intiDataStruct.ultimateNumber, intiDataStruct.bombNumber);
+        _player.setPos((Vector3) calculatePosInMap(start[0], start[1], _player.transform) + Vector3.up, start, true,
+                this);
 
 
+        StartCoroutine(addGoals());
+
+        collider.enabled = true;
+    }
+
+    public IEnumerator addGoals()
+    {
+        yield return null;
         for (int i = 0; i < intiDataStruct.blocksStates.Count; i++)
         {
             int x = i / XSize;
             int z = i % XSize;
             changeMap(x, z, intiDataStruct.blocksStates[i]);
         }
-
-        Player _player = parentObj.GetComponentInChildren<Player>();
-        _player.setUltimateAndBombNumber(intiDataStruct.ultimateNumber, intiDataStruct.bombNumber);
-        _player.GetComponent<Player>()
-            .setPos((Vector3) calculatePosInMap(start[0], start[1], _player.transform) + Vector3.up, start, true,
-                this);
     }
 
 
@@ -270,14 +297,14 @@ public class Map : MonoBehaviour
     {
         if (i >= XSize || j >= zSize || i < 0 || j < 0)
         {
-            Debug.Log("outOfBand");
+            // Debug.Log("outOfBand");
             return null;
         }
 
         // Debug.Log(map[i,j] +"***" + i +"-" + j);
         if (map[i, j] is NormalWall && !isUltimateActive) //it must be empty wall or one way wall
         {
-            Debug.Log("wall");
+            // Debug.Log("wall");
             return null;
         }
 
@@ -335,11 +362,11 @@ public class Map : MonoBehaviour
         GameObject newObj = null;
         if (map[oldX, oldY] != null)
             Destroy(map[oldX, oldY].gameObject);
-        Debug.Log(result + "-- " + result.GetType());
+        // Debug.Log(result + "-- " + result.GetType());
         switch (result)
         {
             case 0:
-                newObj = instanceInMap(EmptyWall, oldX, oldY);
+                newObj = instanceInMap(EmptyWall, oldX, oldY); //empty walls does not need to know where are they
                 break;
             case 1:
                 newObj = instanceInMap(normallWall, oldX, oldY);
@@ -350,8 +377,10 @@ public class Map : MonoBehaviour
                 newObj.GetComponent<Obstacle>().setterXZ(oldX, oldY, this);
                 break;
             case 3:
+                Debug.Log("goal created");
                 newObj = instanceInMap(_goal, oldX, oldY, 0.5f);
                 newObj.GetComponent<Obstacle>().setterXZ(oldX, oldY, this);
+                Debug.Log(newObj.transform.position);
                 break;
         }
 

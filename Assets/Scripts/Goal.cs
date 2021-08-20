@@ -8,6 +8,7 @@ public class Goal : Obstacle
     {
         if (other.tag == "Player")
         {
+            Debug.Log("i catched by pleayer");
             other.GetComponent<Player>()?.addPoint(1);
             wallDestruction();
             if (other.GetComponent<Player>().getPoint() == map.getNumberOfGoals())
@@ -15,5 +16,11 @@ public class Goal : Obstacle
                 //todo finish
             }
         }
+    }
+   
+    
+    public void Start()
+    {
+        Debug.Log("goal is started");
     }
 }
