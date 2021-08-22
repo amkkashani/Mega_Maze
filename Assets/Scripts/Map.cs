@@ -223,6 +223,7 @@ public class Map : MonoBehaviour
         if (intiDataStruct.Equals(default(MapDataStruct)))
         {
             Debug.Log("this map cant be reset");
+            collider.enabled = true;
             return;
         }
         

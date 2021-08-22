@@ -271,6 +271,7 @@ public class Player : Agent
     {
         // Debug.Log("i get point");
         map.resetMap();
+        resetPoint();
     }
 
     public void resetPoint()
@@ -287,8 +288,7 @@ public class Player : Agent
             //end episode 
             Debug.Log("end episod");
             // Debug.Log(posIndex[0] +" -- " + posIndex[1]);
-            resetPoint();
-            map.resetMap();
+            // map.resetMap();
             EndEpisode();
             
         }
