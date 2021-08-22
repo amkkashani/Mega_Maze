@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 2964792766218076866}
   - component: {fileID: 246717347}
   m_Layer: 0
-  m_Name: player
+  m_Name: playerAgent
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -116,7 +116,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 1500
+  MaxStep: 2000
   minmumAcceptableDistance: 0.1
   reachSpeedFactor: 0.05
   explosionRadius: 3
@@ -164,7 +164,7 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 5022602860645237092, guid: 9f67b38ffae411b409e84321a3d4b925, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 2
+  m_BehaviorType: 1
   m_BehaviorName: MazeSolver
   TeamId: 0
   m_UseChildSensors: 1
@@ -182,7 +182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 20
+  DecisionPeriod: 1
   TakeActionsBetweenDecisions: 0
 --- !u!1001 &7691418604083332445
 PrefabInstance:

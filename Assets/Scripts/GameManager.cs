@@ -11,6 +11,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private GameObject mapObj;
     [SerializeField] private List<Map> _maps;
     [SerializeField] private bool loadFromSavedData;
+    [SerializeField] private string saveFileName;
     public ListOfMapsStruct ListOfMapsStruct = new ListOfMapsStruct();
     private static int maxId = 1;
     [SerializeField] private float mapDistance = 50;
@@ -59,7 +60,7 @@ public class GameManager : Singleton<GameManager>
         
         string savedString = ListOfMapsStruct.ToJson();
         Debug.Log(savedString);
-        FileManager.WriteToFile("mapSetting", savedString);
+        FileManager.WriteToFile("saveFiles//"+saveFileName, savedString);
         
     }
 
@@ -89,14 +90,14 @@ public class GameManager : Singleton<GameManager>
         //save entire accepted maps in the directory
         string savedString = ListOfMapsStruct.ToJson();
         Debug.Log(savedString);
-        FileManager.WriteToFile("mapSetting", savedString);
+        FileManager.WriteToFile("saveFiles//"+saveFileName, savedString);
     }
 
     private ListOfMapsStruct loadMapsStructs()
     {
         string res;
         ListOfMapsStruct loadedStructs = new ListOfMapsStruct();
-        FileManager.LoadFromFile("mapSetting", out res);
+        FileManager.LoadFromFile("saveFiles//"+saveFileName, out res);
         Debug.Log(res);
         loadedStructs.LoadFromJson(res);
         Debug.Log(loadedStructs._structsMap[0].blocksStates.Count);

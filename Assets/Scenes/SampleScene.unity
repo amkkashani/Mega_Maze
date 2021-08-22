@@ -332,6 +332,7 @@ MonoBehaviour:
   _maps:
   - {fileID: 0}
   loadFromSavedData: 1
+  saveFileName: 15X15
   ListOfMapsStruct:
     _structsMap: []
   mapDistance: 60
