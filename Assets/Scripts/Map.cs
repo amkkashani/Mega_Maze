@@ -287,8 +287,9 @@ public class Map : MonoBehaviour
         GameObject result = Instantiate(obj,
             originPivot + new Vector3(i * blockSizeOfMap - XSize * blockSizeOfMap / 2 + blockSizeOfMap / 2,
                 obj.transform.localScale.y / 2 + Y_offset,
-                j * blockSizeOfMap - zSize * blockSizeOfMap / 2 + blockSizeOfMap / 2), Quaternion.identity,
-            parentObj.transform);
+                j * blockSizeOfMap - zSize * blockSizeOfMap / 2 + blockSizeOfMap / 2), Quaternion.identity);
+        result.transform.parent = parentObj.transform;
+        
         return result;
     }
 

@@ -123,6 +123,83 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &671470844
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 391978317107797044, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_Name
+      value: map
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -6.6273828
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 42.83737
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -35.110653
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797048, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797049, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: loadedMap
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391978317107797049, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+      propertyPath: isRandomMap
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,7 +291,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &963194225
 GameObject:
@@ -330,9 +407,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapObj: {fileID: 391978317107797044, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
   _maps:
-  - {fileID: 0}
+  - {fileID: 1758391450}
   loadFromSavedData: 1
-  saveFileName: 15X15
+  saveFileName: 10X10
   ListOfMapsStruct:
     _structsMap: []
   mapDistance: 60
@@ -349,8 +426,19 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1758391450 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 391978317107797049, guid: 987c465a2d9c2194680638da8a988b7a, type: 3}
+  m_PrefabInstance: {fileID: 671470844}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2be2d02f6cf722b458ed45c04a9d4690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2130697017
 GameObject:
   m_ObjectHideFlags: 0
@@ -379,5 +467,5 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
