@@ -132,7 +132,11 @@ public class Player : Agent
     {
         switch (vectorAction[0])
         {
-            case 0:  //do nothing
+            case 0: // do nothing
+                AddReward(-5);
+                break;
+            case 5:  //area bomb
+                destroyEnvBomb();
                 break;
             case 1:  //go up
                 if (moveToIndex(posIndex[0], posIndex[1] + 1, ultimateIsActive))
@@ -140,7 +144,11 @@ public class Player : Agent
                     posIndex[1] += 1;
                     ultimateIsActive = false;
                     ultimateEffect.SetActive(false);
-                }    
+                }
+                else
+                {
+                    AddReward(-3); //useless action
+                }
                 break;
             
             case 2: // go right
@@ -149,6 +157,9 @@ public class Player : Agent
                     ultimateIsActive = false;
                     ultimateEffect.SetActive(false);
                     posIndex[0] += 1;
+                }else
+                {
+                    AddReward(-3); //useless action
                 }    
                 break;
             case 3: // go down
@@ -157,6 +168,9 @@ public class Player : Agent
                     ultimateIsActive = false;
                     ultimateEffect.SetActive(false);
                     posIndex[1] -= 1;
+                }else
+                {
+                    AddReward(-3); //useless action
                 }
                 break;
             case 4: // go left
@@ -165,20 +179,17 @@ public class Player : Agent
                     ultimateIsActive = false;
                     ultimateEffect.SetActive(false);
                     posIndex[0] -= 1;
-                }    
+                }else
+                {
+                    AddReward(-3); //useless action
+                }  
                 break;
+            case 6: //oneWallBomb
+                activeUltimate();
+                break;
+                
         }
 
-        if (vectorAction[1] == 1)
-        {
-            activeUltimate();
-        }
-
-        if (vectorAction[2] == 1)
-        {
-            destroyEnvBomb();
-        }
-        
         AddReward(-50.0f/MaxStep);
     }
 
@@ -190,8 +201,6 @@ public class Player : Agent
         // index [2]=> 0:not to do , 1: activate the bomb
         // by default we do nothing
         actionsOut[0] = 0;
-        actionsOut[1] = 0;
-        actionsOut[2] = 0;
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             actionsOut[0] = 1;
@@ -213,20 +222,25 @@ public class Player : Agent
         }
         if (Input.GetKey(KeyCode.Keypad0) && bombNumber != 0)
         {
-            actionsOut[2] = 1;
+            actionsOut[0] = 5;
             
         }
 
         if (Input.GetKey(KeyCode.Keypad1))
         {
-            actionsOut[1] = 1;
+            actionsOut[0] = 6;
         }
     }
 
     private void activeUltimate()
     {
-        if (ultimateIsActive || ultimateNumber ==0)
+        AddReward(-1);
+        if (ultimateIsActive || ultimateNumber == 0)
+        {
+            AddReward(-10);//this minus reward teach agent dont waste action with repeating useless actions
             return; // if ultimate is already active no need to turn it on
+        }
+
         ultimateIsActive = true;
         ultimateNumber--;
         ultimateEffect.SetActive(true);
@@ -250,6 +264,7 @@ public class Player : Agent
 
     private void destroyEnvBomb()
     {
+        AddReward(-1);
         if (bombNumber == 0)
         {
             return; 

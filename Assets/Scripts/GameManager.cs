@@ -34,6 +34,7 @@ public class GameManager : Singleton<GameManager>
         
         if (loadFromSavedData)
         {
+            _maps = new List<Map>(); // this line clear defualt array list with null values when we use save file we must clean the list
             for (int i = 0; i < ListOfMapsStruct._structsMap.Count; i++)
             {
                 int z = i % 8;

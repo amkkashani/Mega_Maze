@@ -323,7 +323,7 @@ public class Map : MonoBehaviour
     private Vector3 safeCalculatePosInPMap(int i, int j, Transform obj)
     {
         return originPivot + new Vector3(i * blockSizeOfMap - XSize * blockSizeOfMap / 2 + blockSizeOfMap / 2,
-            0.15f + obj.transform.localScale.y / 2,
+            0.4f + obj.transform.localScale.y / 2,
             j * blockSizeOfMap - zSize * blockSizeOfMap / 2 + blockSizeOfMap / 2);
     }
 
