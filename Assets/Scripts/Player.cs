@@ -133,7 +133,7 @@ public class Player : Agent
         switch (vectorAction[0])
         {
             case 0: // do nothing
-                AddReward(-5);
+                AddReward(-0.5f);
                 break;
             case 5:  //area bomb
                 destroyEnvBomb();
@@ -147,7 +147,7 @@ public class Player : Agent
                 }
                 else
                 {
-                    AddReward(-3); //useless action
+                    AddReward(-0.3f); //useless action
                 }
                 break;
             
@@ -159,7 +159,7 @@ public class Player : Agent
                     posIndex[0] += 1;
                 }else
                 {
-                    AddReward(-3); //useless action
+                    AddReward(-0.3f); //useless action
                 }    
                 break;
             case 3: // go down
@@ -170,7 +170,7 @@ public class Player : Agent
                     posIndex[1] -= 1;
                 }else
                 {
-                    AddReward(-3); //useless action
+                    AddReward(-0.3f); //useless action
                 }
                 break;
             case 4: // go left
@@ -181,7 +181,7 @@ public class Player : Agent
                     posIndex[0] -= 1;
                 }else
                 {
-                    AddReward(-3); //useless action
+                    AddReward(-0.3f); //useless action
                 }  
                 break;
             case 6: //oneWallBomb
@@ -237,7 +237,7 @@ public class Player : Agent
         AddReward(-1);
         if (ultimateIsActive || ultimateNumber == 0)
         {
-            AddReward(-10);//this minus reward teach agent dont waste action with repeating useless actions
+            AddReward(-1);//this minus reward teach agent dont waste action with repeating useless actions
             return; // if ultimate is already active no need to turn it on
         }
 
