@@ -537,7 +537,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2558436945468733009, guid: 43615d1c765d6404799c4309b3f84caf, type: 3}
       propertyPath: m_Name
-      value: map10X10
+      value: map10X-1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2558436945468733009, guid: 43615d1c765d6404799c4309b3f84caf, type: 3}
+      propertyPath: m_TagString
+      value: map
       objectReference: {fileID: 0}
     - target: {fileID: 2558436945468733020, guid: 43615d1c765d6404799c4309b3f84caf, type: 3}
       propertyPath: numberOfGoals

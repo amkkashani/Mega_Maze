@@ -50,50 +50,27 @@ public class Map : MonoBehaviour
         map = new Obstacle[XSize, zSize];
     }
 
+    //this function destroy  walls and goals and palyers
+    public void destroyElements()
+    {
+        Transform[] childs = parentObj.GetComponentsInChildren<Transform>();
+        for (int i = 1; i < childs.Length; i++)
+        {
+            Destroy(childs[i].gameObject);
+        }
+    }
+
     public void Start()
     {
         if (loadedMap)
         {
+            
             return;
         }
 
         if (isRandomMap)
         {
-            // random map
-            float sum = chanceOfEmptyWall + chanceOfNormallWall + chanceOfOnWayWall;
-            float probEmptyWall = chanceOfEmptyWall / sum;
-            float probNormallWall = chanceOfNormallWall / sum;
-            float probOneWayWall = chanceOfOnWayWall / sum;
-
-            for (int i = 0; i < XSize; i++)
-            {
-                for (int j = 0; j < zSize; j++)
-                {
-                    GameObject newObj = null;
-                    float rnd = Random.Range(0, 1.0f);
-                    // Debug.Log(rnd +"___"+ probEmptyWall);
-                    if (rnd < probEmptyWall)
-                    {
-                        newObj = instanceInMap(EmptyWall, i, j);
-                        map[i, j] = newObj.GetComponent<Obstacle>();
-                        emptyList.Add(new[] {i, j});
-                    }
-                    else if (rnd < probEmptyWall + probNormallWall)
-                    {
-                        newObj = instanceInMap(normallWall, i, j);
-                        map[i, j] = newObj.GetComponent<Obstacle>();
-                    }
-                    else if (rnd < probEmptyWall + probNormallWall + probOneWayWall)
-                    {
-                        newObj = instanceInMap(oneWayWall, i, j);
-                        map[i, j] = newObj.GetComponent<Obstacle>();
-                    }
-
-                    newObj.GetComponent<Obstacle>().setterXZ(i, j, this);
-                }
-            }
-
-            choosePlayerStartPointAndGoals(numberOfGoals);
+            makeRandomMap();
         }
         else
         {
@@ -152,6 +129,44 @@ public class Map : MonoBehaviour
         // GameManager.Instance.saveMap(2);
     }
 
+    private void makeRandomMap()
+    {
+        // random map
+        float sum = chanceOfEmptyWall + chanceOfNormallWall + chanceOfOnWayWall;
+        float probEmptyWall = chanceOfEmptyWall / sum;
+        float probNormallWall = chanceOfNormallWall / sum;
+        float probOneWayWall = chanceOfOnWayWall / sum;
+
+        for (int i = 0; i < XSize; i++)
+        {
+            for (int j = 0; j < zSize; j++)
+            {
+                GameObject newObj = null;
+                float rnd = Random.Range(0, 1.0f);
+                // Debug.Log(rnd +"___"+ probEmptyWall);
+                if (rnd < probEmptyWall)
+                {
+                    newObj = instanceInMap(EmptyWall, i, j);
+                    map[i, j] = newObj.GetComponent<Obstacle>();
+                    emptyList.Add(new[] {i, j});
+                }
+                else if (rnd < probEmptyWall + probNormallWall)
+                {
+                    newObj = instanceInMap(normallWall, i, j);
+                    map[i, j] = newObj.GetComponent<Obstacle>();
+                }
+                else if (rnd < probEmptyWall + probNormallWall + probOneWayWall)
+                {
+                    newObj = instanceInMap(oneWayWall, i, j);
+                    map[i, j] = newObj.GetComponent<Obstacle>();
+                }
+
+                newObj.GetComponent<Obstacle>().setterXZ(i, j, this);
+            }
+        }
+        choosePlayerStartPointAndGoals(numberOfGoals);
+    }
+
     //just for test 
     public int checkCell(int x , int z)
     {
@@ -165,6 +180,25 @@ public class Map : MonoBehaviour
 
         return 0;
 
+    }
+
+    //entirly check map array and find zero values with index
+    //when we need have empty list
+    //this function must use in loaded map with different spawn player position
+    private void updateEmptyList()
+    {
+        emptyList = new List<int[]>();
+        for (int i = 0; i < XSize; i++)
+        {
+            for (int j = 0; j < zSize; j++)
+            {
+                if (map[i,j] is Empty)
+                {
+                    emptyList.Add(new int[]{i,j});
+                }
+            }
+            
+        }
     }
     //this function must called when instance map from save system
     public void setupMapByStruct(MapDataStruct structData)
@@ -207,22 +241,19 @@ public class Map : MonoBehaviour
     //reset just use for maps that loaded from save file 
     public void resetMap()
     {
-        // for (int i = 0; i < XSize; i++)
-        // {
-        //     for (int j = 0; j < zSize; j++)
-        //     {
-        //         Destroy(map[i, j].gameObject);
-        //     }
-        // }
-        // Destroy(myPlayeTransform.gameObject);
-        // setupMapByStruct(intiDataStruct);
+        if (isRandomMap)
+        {
+            destroyElements();
+            makeRandomMap();
+            return;
+        }
         Collider collider = myPlayeTransform.GetComponent<CapsuleCollider>();
         collider.enabled = false;
         
         
         if (intiDataStruct.Equals(default(MapDataStruct)))
         {
-            Debug.Log("this map cant be reset");
+            Debug.Log("this map cant be reset it is custom map you must save it :)");
             collider.enabled = true;
             return;
         }
@@ -268,7 +299,7 @@ public class Map : MonoBehaviour
         _playerObj.GetComponent<Player>()
             .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
                 this);
-
+        
         for (int i = 0; i < goalNumbers && tempEmptyList.Count > 1; i++)
         {
             //handle goals setup
