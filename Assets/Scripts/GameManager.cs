@@ -15,7 +15,14 @@ public class GameManager : Singleton<GameManager>
     public ListOfMapsStruct ListOfMapsStruct = new ListOfMapsStruct();
     private static int maxId = 1;
     [SerializeField] private float mapDistance = 50;
+    [SerializeField] private bool randomPosReset = true;
     public int removeId;
+
+    public bool isRandomStart()
+    {
+        return randomPosReset;
+    }
+    
     void Awake()
     {
         // load

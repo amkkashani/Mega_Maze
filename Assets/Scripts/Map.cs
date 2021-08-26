@@ -257,6 +257,7 @@ public class Map : MonoBehaviour
             collider.enabled = true;
             return;
         }
+
         
         int[] start = intiDataStruct.playerPos.ToArray();
         
@@ -264,12 +265,26 @@ public class Map : MonoBehaviour
         Player _player = myPlayeTransform.GetComponent<Player>();
         _player.setUltimateAndBombNumber(intiDataStruct.ultimateNumber, intiDataStruct.bombNumber);
         _player.setPos((Vector3) calculatePosInMap(start[0], start[1], _player.transform) + Vector3.up, start, true,
-                this);
+            this);
 
 
         StartCoroutine(addGoals());
 
         collider.enabled = true;
+        
+        //this part help to have better random start pos for player
+        //better learn and better resualts
+        if (GameManager.Instance.isRandomStart())
+        {
+            updateEmptyList();
+            int[] newPos = emptyList[Random.Range(0, emptyList.Count)];
+            _player.GetComponent<Player>()
+                .setPos((Vector3) calculatePosInMap(newPos[0], newPos[1], _player.transform) + Vector3.up, newPos, true,
+                    this);
+
+        }
+
+
     }
 
     public IEnumerator addGoals()
@@ -280,6 +295,7 @@ public class Map : MonoBehaviour
             int x = i / XSize;
             int z = i % XSize;
             changeMap(x, z, intiDataStruct.blocksStates[i]);
+            
         }
     }
 
@@ -304,7 +320,6 @@ public class Map : MonoBehaviour
         {
             //handle goals setup
             rnd = Random.Range(0, tempEmptyList.Count);
-            // Debug.Log(tempEmptyList.Count);
             int[] goalIndex = tempEmptyList[rnd];
             // GameObject newWall = instanceInMap(_goal, goalIndex[0], goalIndex[1], 0.5f); //todo good for making bugs
             // newWall.GetComponent<Obstacle>()?.setterXZ(goalIndex[0], goalIndex[1]);
