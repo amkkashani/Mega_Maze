@@ -332,10 +332,11 @@ MonoBehaviour:
   _maps:
   - {fileID: 0}
   loadFromSavedData: 1
-  saveFileName: 10X10_Tests
+  saveFileName: 10X10_train2_part2
   ListOfMapsStruct:
     _structsMap: []
   mapDistance: 60
+  randomPosReset: 1
   removeId: 0
 --- !u!4 &987629007
 Transform:

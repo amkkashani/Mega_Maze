@@ -13,14 +13,21 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private bool loadFromSavedData;
     [SerializeField] private string saveFileName;
     public ListOfMapsStruct ListOfMapsStruct = new ListOfMapsStruct();
+    [SerializeField] private bool randomPosReset = true;
+    [SerializeField] private bool randomPosTarget = true;
     private static int maxId = 1;
     [SerializeField] private float mapDistance = 50;
-    [SerializeField] private bool randomPosReset = true;
+    
     public int removeId;
 
     public bool isRandomStart()
     {
         return randomPosReset;
+    }
+
+    public bool isRandomTarget()
+    {
+        return randomPosTarget;
     }
     
     void Awake()

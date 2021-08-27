@@ -24200,9 +24200,9 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 1500
+  MaxStep: 3000
   minmumAcceptableDistance: 0.1
-  reachSpeedFactor: 0.1
+  reachSpeedFactor: 0.9
   explosionRadius: 3
   points: 0
   bombNumber: 10
@@ -24241,12 +24241,12 @@ MonoBehaviour:
     NumStackedVectorObservations: 3
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 07000000
-    VectorActionSize: 07000000
+      BranchSizes: 08000000
+    VectorActionSize: 08000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: b1ef1ecc0c8b03f458dd82a26ea5b219, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 1
   m_BehaviorName: MazeSolver_10X10

@@ -128,6 +128,11 @@ public class Player : Agent
         // }
     // }
 
+    public int[] getPosIndex()
+    {
+        return posIndex;
+    }
+    
     public override void OnActionReceived(float[] vectorAction)
     {
         switch (vectorAction[0])
@@ -186,6 +191,10 @@ public class Player : Agent
                 break;
             case 6: //oneWallBomb
                 activeUltimate();
+                break;
+            case 7://endepisod
+                AddReward(-6);
+                EndEpisode();
                 break;
                 
         }

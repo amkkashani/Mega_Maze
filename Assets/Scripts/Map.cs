@@ -268,7 +268,7 @@ public class Map : MonoBehaviour
             this);
 
 
-        StartCoroutine(addGoals());
+        StartCoroutine(addWalls());
 
         collider.enabled = true;
         
@@ -284,10 +284,47 @@ public class Map : MonoBehaviour
 
         }
 
+        if (GameManager.Instance.isRandomTarget())
+        {
 
+            StartCoroutine(makeRandomGoals());
+        }
     }
 
-    public IEnumerator addGoals()
+    private IEnumerator makeRandomGoals()
+    {
+        yield return null;
+        yield return null;
+        
+        //clean the goals
+        for (int i = 0; i < XSize; i++)
+        {
+            for (int j = 0; j < zSize; j++)
+            {
+                if (map[i,j] is Goal)
+                {
+                    changeMap(i,j,0);
+                }
+            }
+        }
+        updateEmptyList();
+        for (int i = 0; i < numberOfGoals; i++)
+        {
+            int[] newPos = emptyList[Random.Range(0, emptyList.Count)];
+            Player player = myPlayeTransform.GetComponent<Player>();
+            int[] playerPos = player.getPosIndex();
+            if (newPos[0] == playerPos[0] && newPos[1] == playerPos[1])
+            {
+                //if colided with player try again
+                i--;
+                continue;
+            }
+            changeMap(newPos[0],newPos[1],3);
+        }
+    }
+    
+
+    public IEnumerator addWalls()
     {
         yield return null;
         for (int i = 0; i < intiDataStruct.blocksStates.Count; i++)
