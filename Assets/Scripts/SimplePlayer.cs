@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimplePlayer : MonoBehaviour ,Player2
+public class SimplePlayer : MonoBehaviour ,PlayerParent
 {
     [SerializeField] private float minmumAcceptableDistance = 0.1f;
     [SerializeField] private float reachSpeedFactor = 0.05f;
@@ -23,9 +23,8 @@ public class SimplePlayer : MonoBehaviour ,Player2
     void Start()
     {
         ultimateEffect.SetActive(false);
-        if (this.GetComponent<Player2>() ==null)
+        if (this.GetComponent<PlayerParent>() ==null)
         {
-            Debug.Log("peida nakardam");
         }
     }
 
@@ -186,7 +185,12 @@ public class SimplePlayer : MonoBehaviour ,Player2
         }
     }
 
-    public void test(Player player)
+    public void test(PlayerAgent playerAgent)
     {
+    }
+    
+    public Transform getTransform()
+    {
+        return this.transform;
     }
 }

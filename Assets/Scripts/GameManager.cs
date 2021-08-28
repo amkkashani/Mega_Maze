@@ -12,6 +12,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private List<Map> _maps;
     [SerializeField] private bool loadFromSavedData;
     [SerializeField] private string saveFileName;
+    [SerializeField] private GameObject playerGameObject;
     public ListOfMapsStruct ListOfMapsStruct = new ListOfMapsStruct();
     [SerializeField] private bool randomPosReset = true;
     [SerializeField] private bool randomPosTarget = true;
@@ -20,6 +21,10 @@ public class GameManager : Singleton<GameManager>
     
     public int removeId;
 
+    public GameObject getPlayerGameObject()
+    {
+        return playerGameObject;
+    }
     public bool isRandomStart()
     {
         return randomPosReset;
@@ -67,6 +72,7 @@ public class GameManager : Singleton<GameManager>
             foreach (GameObject tempMap in secenMaps)
             {
                 _maps.Add(tempMap.GetComponent<Map>());
+                Debug.Log("i find the map");
             }
         }
         

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.MLAgents;
 using UnityEngine;
 
-public class PlayerTemp : MonoBehaviour , Player2
+public class PlayerParentTemp : MonoBehaviour , PlayerParent
 {
     [SerializeField] private float minmumAcceptableDistance = 0.1f;
     [SerializeField] private float reachSpeedFactor = 0.05f;
@@ -175,5 +175,10 @@ public class PlayerTemp : MonoBehaviour , Player2
     public int getPoint()
     {
         return points;
+    }
+
+    public Transform getTransform()
+    {
+        return this.transform;
     }
 }

@@ -4,7 +4,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
 
-public class Player : Agent
+public class PlayerAgent : Agent ,PlayerParent
 {
     [SerializeField] private float minmumAcceptableDistance = 0.1f;
     [SerializeField] private float reachSpeedFactor = 0.05f;
@@ -338,5 +338,10 @@ public class Player : Agent
     public int getPoint()
     {
         return points;
+    }
+    
+    public Transform getTransform()
+    {
+        return this.transform;
     }
 }

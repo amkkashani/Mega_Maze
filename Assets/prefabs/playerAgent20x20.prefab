@@ -12,12 +12,11 @@ GameObject:
   - component: {fileID: 870373318562081316}
   - component: {fileID: 8189936513589707424}
   - component: {fileID: 6683904852021501562}
-  - component: {fileID: 7143981247887575774}
   - component: {fileID: 1347968513}
-  - component: {fileID: 2964792766218076866}
-  - component: {fileID: 246717347}
+  - component: {fileID: 5913676348217266323}
+  - component: {fileID: 792707717338275209}
   m_Layer: 0
-  m_Name: playerAgent
+  m_Name: playerAgent20x20
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -101,29 +100,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7143981247887575774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 455192649683255333}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dda8d3142e8c4274f912cdb8b7d48f18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  agentParameters:
-    maxStep: 0
-  hasUpgradedFromAgentParameters: 1
-  MaxStep: 3500
-  minmumAcceptableDistance: 0.1
-  reachSpeedFactor: 0.05
-  explosionRadius: 3
-  points: 0
-  bombNumber: 10
-  ultimateNumber: 5
-  ultimateEffect: {fileID: 7690579606774642605}
 --- !u!54 &1347968513
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -140,7 +116,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 1
---- !u!114 &2964792766218076866
+--- !u!114 &5913676348217266323
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -153,24 +129,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 405
-    NumStackedVectorObservations: 2
+    VectorObservationSize: 1
+    NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 050000000200000002000000
-    VectorActionSize: 050000000200000002000000
+      BranchSizes: 
+    VectorActionSize: 
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 9f67b38ffae411b409e84321a3d4b925, type: 3}
-  m_InferenceDevice: 0
-  m_BehaviorType: 1
-  m_BehaviorName: MazeSolver
+  m_Model: {fileID: 0}
+  m_InferenceDevice: 2
+  m_BehaviorType: 0
+  m_BehaviorName: solver20x20
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
   m_ObservableAttributeHandling: 0
---- !u!114 &246717347
+--- !u!114 &792707717338275209
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -179,11 +155,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 455192649683255333}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Script: {fileID: 11500000, guid: 719ee2411421e20468154b5be46b20af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 4
-  TakeActionsBetweenDecisions: 0
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 3500
+  minmumAcceptableDistance: 0.1
+  reachSpeedFactor: 0.05
+  explosionRadius: 3
+  points: 0
+  bombNumber: 5
+  ultimateNumber: 5
+  ultimateEffect: {fileID: 7690579606774642605}
 --- !u!1001 &7691418604083332445
 PrefabInstance:
   m_ObjectHideFlags: 0

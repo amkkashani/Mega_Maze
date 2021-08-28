@@ -9,9 +9,9 @@ public class Goal : Obstacle
         if (other.tag == "Player")
         {
             Debug.Log("i catched by pleayer");
-            other.GetComponent<Player>()?.addPoint(1);
+            other.GetComponent<PlayerParent>()?.addPoint(1);
             wallDestruction();
-            if (other.GetComponent<Player>().getPoint() == map.getNumberOfGoals())
+            if (other.GetComponent<PlayerParent>().getPoint() == map.getNumberOfGoals())
             {
                 //todo finish
             }

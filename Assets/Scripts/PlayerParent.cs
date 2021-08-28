@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface Player2
+public interface PlayerParent
 {
     public void getUltimateAndBombNumber(ref int ultimate, ref int bombNumber);
     public void setUltimateAndBombNumber(int ultimate, int bombNumber);
@@ -11,4 +11,6 @@ public interface Player2
     public void resetPoint();
     public void addPoint(int value);
     public int getPoint();
+
+    public Transform getTransform();
 }
