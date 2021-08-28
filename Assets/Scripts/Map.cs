@@ -313,7 +313,7 @@ public class Map : MonoBehaviour
             int[] newPos = emptyList[Random.Range(0, emptyList.Count)];
             Player player = myPlayeTransform.GetComponent<Player>();
             int[] playerPos = player.getPosIndex();
-            if (newPos[0] == playerPos[0] && newPos[1] == playerPos[1])
+            if (newPos[0] == playerPos[0] && newPos[1] == playerPos[1] && map[newPos[0],newPos[1]] is Empty)
             {
                 //if colided with player try again
                 i--;

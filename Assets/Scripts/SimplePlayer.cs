@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.MLAgents;
 using UnityEngine;
 
-public class PlayerTemp : MonoBehaviour , Player2
+public class SimplePlayer : MonoBehaviour ,Player2
 {
     [SerializeField] private float minmumAcceptableDistance = 0.1f;
     [SerializeField] private float reachSpeedFactor = 0.05f;
@@ -18,61 +17,20 @@ public class PlayerTemp : MonoBehaviour , Player2
     private bool ultimateIsActive = false;
 
     private Map map;
-
+    
+    
+    // Start is called before the first frame update
     void Start()
     {
         ultimateEffect.SetActive(false);
-    }
-
-    public void getUltimateAndBombNumber(ref int ultimate , ref int bombNumber)
-    {
-        ultimate = this.ultimateNumber;
-        bombNumber = this.bombNumber;
-    }
-
-    public void setUltimateAndBombNumber(int ultimate, int bombNumber)
-    {
-        this.ultimateNumber = ultimate;
-        this.bombNumber = bombNumber;
-    }
-    
-    
-    // when use fast == true you want to setup firs location of player and also you say player plays in which map 
-    public void setPos(Vector3 target, int[] posIndex, bool fast = false , Map map =null)
-    {
-        this.posIndex = posIndex;
-        finalTarget = target;
-        if (fast)
+        if (this.GetComponent<Player2>() ==null)
         {
-            this.map = map; //first time must pass the map object to function
-            this.transform.position = target;
-        }
-
-        // Debug.Log(posIndex[0] + "---" + posIndex[1]);
-    }
-
-    public int[] getPosIndex()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void resetPoint()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    private void setPos(Vector3? target, bool fast = false)
-    {
-        if (target == null)
-            return;
-        finalTarget = (Vector3) target;
-        if (fast)
-        {
-            this.transform.position = (Vector3) target;
+            Debug.Log("peida nakardam");
         }
     }
 
-    public void Update()
+    // Update is called once per frame
+    void Update()
     {
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -127,20 +85,78 @@ public class PlayerTemp : MonoBehaviour , Player2
             activeUltimate();
         }
     }
+    
+    
 
+    public void getUltimateAndBombNumber(ref int ultimate, ref int bombNumber)
+    {
+        ultimate = this.ultimateNumber;
+        bombNumber = this.bombNumber;
+    }
+
+    public void setUltimateAndBombNumber(int ultimate, int bombNumber)
+    {
+        this.ultimateNumber = ultimate;
+        this.bombNumber = bombNumber;
+    }
+
+    public void setPos(Vector3 target, int[] posIndex, bool fast = false, Map map = null)
+    {
+        this.posIndex = posIndex;
+        finalTarget = target;
+        if (fast)
+        {
+            this.map = map; //first time must pass the map object to function
+            this.transform.position = target;
+        }
+    }
+    
+    private void setPos(Vector3? target, bool fast = false)
+    {
+        if (target == null)
+            return;
+        finalTarget = (Vector3) target;
+        if (fast)
+        {
+            this.transform.position = (Vector3) target;
+        }
+    }
+
+    public int[] getPosIndex()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void resetPoint()
+    {
+        points = 0;
+    }
+
+    public void addPoint(int value)
+    {
+        this.points += value;
+        if (map.getNumberOfGoals() == points)
+        {
+            Debug.Log("end episod");
+        }
+    }
+
+    public int getPoint()
+    {
+        return points;
+    }
+    
     private void activeUltimate()
     {
-        if (ultimateIsActive || ultimateNumber ==0)
+        if (ultimateIsActive || ultimateNumber == 0)
+        {
             return; // if ultimate is already active no need to turn it on
+        }
         ultimateIsActive = true;
         ultimateNumber--;
         ultimateEffect.SetActive(true);
     }
     
-
-    //
-    //return true if possible
-    //return false in case of index out of bound or collision with walls
     private bool moveToIndex(int x, int z , bool isUltimateActive)
     {
         // Debug.Log("i want go "+ x + " - "+ z);
@@ -153,9 +169,12 @@ public class PlayerTemp : MonoBehaviour , Player2
 
         return false;
     }
-
     private void destroyEnvBomb()
     {
+        if (bombNumber == 0)
+        {
+            return; 
+        }
         bombNumber--;
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
         foreach (var hitCollider in hitColliders)
@@ -167,13 +186,7 @@ public class PlayerTemp : MonoBehaviour , Player2
         }
     }
 
-    public void addPoint(int value)
+    public void test(Player player)
     {
-        this.points += value;
-    }
-
-    public int getPoint()
-    {
-        return points;
     }
 }
