@@ -222,7 +222,6 @@ public class PlayerAgent : Agent ,PlayerParent
         else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             actionsOut[0] = 4;
-            
         }
         else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {

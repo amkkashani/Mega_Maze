@@ -11,11 +11,13 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private GameObject mapObj;
     [SerializeField] private List<Map> _maps;
     [SerializeField] private bool loadFromSavedData;
+    [SerializeField] private ManagerState _managerState;
     [SerializeField] private string saveFileName;
     [SerializeField] private GameObject playerGameObject;
     public ListOfMapsStruct ListOfMapsStruct = new ListOfMapsStruct();
     [SerializeField] private bool randomPosReset = true;
     [SerializeField] private bool randomPosTarget = true;
+    
     private static int maxId = 1;
     [SerializeField] private float mapDistance = 50;
     
@@ -54,7 +56,7 @@ public class GameManager : Singleton<GameManager>
         // this line clear defualt array list with null values when we use save file we must clean the list
         _maps = new List<Map>();
         
-        if (loadFromSavedData)
+        if (_managerState == ManagerState.trainFromFile)
         {
             for (int i = 0; i < ListOfMapsStruct._structsMap.Count; i++)
             {
@@ -66,7 +68,7 @@ public class GameManager : Singleton<GameManager>
                 newMap.setupMapByStruct(mapDataStruct);
             }    
         }
-        else
+        else if(_managerState == ManagerState.customMap)
         {
             GameObject[] secenMaps = GameObject.FindGameObjectsWithTag("map");
             foreach (GameObject tempMap in secenMaps)
@@ -74,6 +76,10 @@ public class GameManager : Singleton<GameManager>
                 _maps.Add(tempMap.GetComponent<Map>());
                 Debug.Log("i find the map");
             }
+        }else if (_managerState == ManagerState.testFromFile)
+        {
+            //test manager Setup
+            
         }
         
     }
@@ -179,4 +185,11 @@ public struct MapDataStruct
     public float blockSize;
     public List<int> blocksStates;
     public List<int> playerPos;
+}
+
+public enum ManagerState
+{
+    testFromFile,
+    trainFromFile,
+    customMap
 }

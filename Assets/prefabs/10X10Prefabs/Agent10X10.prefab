@@ -24224,9 +24224,9 @@ MonoBehaviour:
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
-  m_InferenceDevice: 2
+  m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: My Behavior
+  m_BehaviorName: MazeSolver_10X10
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -24246,7 +24246,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 3000
+  MaxStep: 3600
   minmumAcceptableDistance: 0.1
   reachSpeedFactor: 0.9
   explosionRadius: 3
@@ -24267,4 +24267,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DecisionPeriod: 20
-  TakeActionsBetweenDecisions: 1
+  TakeActionsBetweenDecisions: 0
