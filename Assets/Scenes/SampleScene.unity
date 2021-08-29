@@ -332,13 +332,14 @@ MonoBehaviour:
   _maps:
   - {fileID: 0}
   loadFromSavedData: 1
-  _managerState: 1
+  _managerState: 3
   saveFileName: 10X10_train2
   playerGameObject: {fileID: 7024649507283518341, guid: 7172a47ae9b0afa42abc41d7008fd556, type: 3}
   ListOfMapsStruct:
     _structsMap: []
   randomPosReset: 1
   randomPosTarget: 1
+  numberOfrepeat: 5
   mapDistance: 60
   removeId: 0
 --- !u!4 &987629007

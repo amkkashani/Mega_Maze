@@ -17,12 +17,22 @@ public class GameManager : Singleton<GameManager>
     public ListOfMapsStruct ListOfMapsStruct = new ListOfMapsStruct();
     [SerializeField] private bool randomPosReset = true;
     [SerializeField] private bool randomPosTarget = true;
-    
+    [SerializeField] private int numberOfrepeat = 10;
     private static int maxId = 1;
     [SerializeField] private float mapDistance = 50;
     
     public int removeId;
 
+    public int getNumberOfRepeat()
+    {
+        return numberOfrepeat;
+    }
+
+    public ManagerState getManagerState()
+    {
+        return _managerState;
+    }
+    
     public GameObject getPlayerGameObject()
     {
         return playerGameObject;
@@ -80,6 +90,14 @@ public class GameManager : Singleton<GameManager>
         {
             //test manager Setup
             
+        }else if (_managerState == ManagerState.heuristicTraining)
+        {
+            //heuristic training part
+            if (ListOfMapsStruct._structsMap.Count !=0)
+            {
+                //make first map
+                makeMapByStruct(ListOfMapsStruct._structsMap[0],Vector3.zero);
+            }
         }
         
     }
@@ -101,6 +119,42 @@ public class GameManager : Singleton<GameManager>
         
     }
 
+    //for heuristic levels
+    public void loadNextMap(GameObject gameObject , int id)
+    {
+        
+        int result = 0;
+        bool isFind = false;
+        //if i is last item there is no more item for checking
+        for (int i = 0; i < ListOfMapsStruct._structsMap.Count - 1; i++)
+        {
+            if (id == ListOfMapsStruct._structsMap[i].id)
+            {
+                result = i + 1;
+                isFind = true;
+                continue;
+
+            }
+        }
+
+        Destroy(gameObject);
+        if (isFind)
+        {
+            MapDataStruct mapDataStruct = ListOfMapsStruct._structsMap[result];
+            makeMapByStruct(mapDataStruct, Vector3.zero);
+        }
+        
+        
+    }
+
+    private void makeMapByStruct(MapDataStruct mapDataStruct , Vector3 pos)
+    {
+        GameObject newObj = Instantiate(mapObj, pos, quaternion.identity);
+        Map newMap = newObj.GetComponent<Map>();
+        _maps.Add(newMap);
+        newMap.setupMapByStruct(mapDataStruct);
+    }
+    
     public void saveMap(int id)
     {
         //first remove last data in saved system
@@ -191,5 +245,6 @@ public enum ManagerState
 {
     testFromFile,
     trainFromFile,
-    customMap
+    customMap,
+    heuristicTraining
 }

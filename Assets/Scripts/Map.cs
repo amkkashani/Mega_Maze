@@ -36,10 +36,10 @@ public class Map : MonoBehaviour
     private Vector3 originPivot;
     private MapDataStruct intiDataStruct;
     private Transform myPlayerTransform;
+    private int repeatNumber = 0;
 
     [SerializeField] private Obstacle[,] map;
     [SerializeField] private bool loadedMap = false;
-
     public void Awake()
     {
         originPivot = transform.position;
@@ -241,6 +241,11 @@ public class Map : MonoBehaviour
     //reset just use for maps that loaded from save file 
     public void resetMap()
     {
+        if (GameManager.Instance.getManagerState() == ManagerState.heuristicTraining && repeatNumber > GameManager.Instance.getNumberOfRepeat())
+        {
+            GameManager.Instance.loadNextMap(this.gameObject , this.id);
+        }
+        repeatNumber++;
         if (isRandomMap)
         {
             destroyElements();
