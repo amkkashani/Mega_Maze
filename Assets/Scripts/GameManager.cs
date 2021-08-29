@@ -122,7 +122,8 @@ public class GameManager : Singleton<GameManager>
     //for heuristic levels
     public void loadNextMap(GameObject gameObject , int id)
     {
-        
+        //destroy current level and load next level
+        Destroy(gameObject);
         int result = 0;
         bool isFind = false;
         //if i is last item there is no more item for checking
@@ -136,8 +137,7 @@ public class GameManager : Singleton<GameManager>
 
             }
         }
-
-        Destroy(gameObject);
+        
         if (isFind)
         {
             MapDataStruct mapDataStruct = ListOfMapsStruct._structsMap[result];

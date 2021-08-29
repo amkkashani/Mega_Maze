@@ -273,9 +273,9 @@ public class Map : MonoBehaviour
             this);
 
 
-        StartCoroutine(addWalls());
+        StartCoroutine(addWalls(collider));
 
-        collider.enabled = true;
+        // collider.enabled = true;
         
         //this part help to have better random start pos for player
         //better learn and better resualts
@@ -291,14 +291,14 @@ public class Map : MonoBehaviour
         if (GameManager.Instance.isRandomTarget())
         {
 
-            StartCoroutine(makeRandomGoals());
+            StartCoroutine(makeRandomGoals(collider));
         }
     }
 
-    private IEnumerator makeRandomGoals()
+    private IEnumerator makeRandomGoals(Collider collider)
     {
         yield return null;
-        yield return null;
+        
         
         //clean the goals
         for (int i = 0; i < XSize; i++)
@@ -312,6 +312,7 @@ public class Map : MonoBehaviour
             }
         }
         updateEmptyList();
+        collider.enabled = false;
         for (int i = 0; i < numberOfGoals; i++)
         {
             int[] newPos = emptyList[Random.Range(0, emptyList.Count)];
@@ -325,10 +326,12 @@ public class Map : MonoBehaviour
             }
             changeMap(newPos[0],newPos[1],3);
         }
+        yield return null;
+        collider.enabled = true;
     }
     
 
-    public IEnumerator addWalls()
+    public IEnumerator addWalls(Collider collider)
     {
         yield return null;
         for (int i = 0; i < intiDataStruct.blocksStates.Count; i++)
@@ -338,6 +341,7 @@ public class Map : MonoBehaviour
             changeMap(x, z, intiDataStruct.blocksStates[i]);
             
         }
+        collider.enabled = true;
     }
 
 
