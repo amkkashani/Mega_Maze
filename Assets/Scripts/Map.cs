@@ -464,7 +464,7 @@ public class Map : MonoBehaviour
                 Debug.Log("goal created");
                 newObj = instanceInMap(_goal, oldX, oldY, 0.5f);
                 newObj.GetComponent<Obstacle>().setterXZ(oldX, oldY, this);
-                Debug.Log(newObj.transform.position);
+                // Debug.Log(newObj.transform.position);
                 break;
         }
 

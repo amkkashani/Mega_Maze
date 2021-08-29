@@ -17,10 +17,4 @@ public class Goal : Obstacle
             }
         }
     }
-   
-    
-    public void Start()
-    {
-        Debug.Log("goal is started");
-    }
 }
