@@ -13,6 +13,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private bool loadFromSavedData;
     [SerializeField] private ManagerState _managerState;
     [SerializeField] private string saveFileName;
+    [SerializeField] private string saveResultFileName;
     [SerializeField] private GameObject playerGameObject;
     public ListOfMapsStruct ListOfMapsStruct = new ListOfMapsStruct();
     [SerializeField] private bool randomPosReset = true;
@@ -89,6 +90,12 @@ public class GameManager : Singleton<GameManager>
         }else if (_managerState == ManagerState.testFromFile)
         {
             //test manager Setup
+            //manually u must setup map and agent for this
+            if (ListOfMapsStruct._structsMap.Count !=0)
+            {
+                //make first map
+                makeMapByStruct(ListOfMapsStruct._structsMap[0],Vector3.zero);
+            }
             
         }else if (_managerState == ManagerState.heuristicTraining)
         {
@@ -133,7 +140,7 @@ public class GameManager : Singleton<GameManager>
             {
                 result = i + 1;
                 isFind = true;
-                continue;
+                break;
 
             }
         }
@@ -209,6 +216,28 @@ public class GameManager : Singleton<GameManager>
         GameManager.maxId++;
         return res;
     }
+    
+    public void writetoFileSolverStruct(TestResultSolver testResultSolver)
+    {
+        string added = "";
+        added += testResultSolver.id;
+        added += ",";
+        added += testResultSolver.numberOfrepeat;
+        added += ",";
+        added += testResultSolver.stepNumber;
+        added += ",";
+        added += testResultSolver.avgOfpoints;
+        added += ",";
+        added += testResultSolver.maxOfGoalReach;
+        added += "\n";
+        
+        
+        string current;
+        FileManager.LoadFromFile("saveFiles//"+saveResultFileName, out current);
+
+        FileManager.WriteToFile("saveFiles//"+saveResultFileName, current + added);
+
+    }
 }
 
 //this class just made for serializing with library 
@@ -247,4 +276,13 @@ public enum ManagerState
     trainFromFile,
     customMap,
     heuristicTraining
+}
+
+public struct TestResultSolver
+{
+    public int id;
+    public int numberOfrepeat;
+    public float stepNumber;
+    public float avgOfpoints;
+    public int maxOfGoalReach; // maximum number of that available
 }

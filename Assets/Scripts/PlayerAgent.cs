@@ -125,11 +125,6 @@ public class PlayerAgent : Agent ,PlayerParent
         }
     }
 
-    // public void Update()
-    // {
-        
-    // }
-
     public int[] getPosIndex()
     {
         return posIndex;
@@ -141,7 +136,7 @@ public class PlayerAgent : Agent ,PlayerParent
         {
             case 0: // end episod
                 AddReward(-6);
-                EndEpisode();
+                finishLevel();
                 break;
             case 5:  //area bomb
                 destroyEnvBomb();
@@ -302,8 +297,11 @@ public class PlayerAgent : Agent ,PlayerParent
 
     public override void OnEpisodeBegin()
     {
-        // Debug.Log("i get point");
-        map.resetMap();
+        if (!map.resetMap(points , StepCount))
+        {
+            //if other map is loaded no need to reset or reset
+            return;
+        }
         resetPoint();
     }
 
@@ -322,11 +320,25 @@ public class PlayerAgent : Agent ,PlayerParent
             Debug.Log("end episod");
             // Debug.Log(posIndex[0] +" -- " + posIndex[1]);
             // map.resetMap();
-            EndEpisode();
+            finishLevel();
             
         }
         
         
+    }
+
+    private void finishLevel()
+    {
+        if (map.canReset())
+        {
+            EndEpisode();
+        }
+        else
+        {
+            this.gameObject.SetActive(false);
+            map.resetMap(points, StepCount);
+        }
+
     }
     
     

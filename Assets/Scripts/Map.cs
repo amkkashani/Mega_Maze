@@ -26,7 +26,7 @@ public class Map : MonoBehaviour
 
     [SerializeField] private GameObject parentObj;
 
-    
+
 
     [SerializeField] private bool isRandomMap = true;
 
@@ -37,9 +37,11 @@ public class Map : MonoBehaviour
     private MapDataStruct intiDataStruct;
     private Transform myPlayerTransform;
     private int repeatNumber = 0;
+    private TestResultSolver _testResultSolver = new TestResultSolver();
 
     [SerializeField] private Obstacle[,] map;
     [SerializeField] private bool loadedMap = false;
+
     public void Awake()
     {
         originPivot = transform.position;
@@ -64,7 +66,6 @@ public class Map : MonoBehaviour
     {
         if (loadedMap)
         {
-            
             return;
         }
 
@@ -121,7 +122,8 @@ public class Map : MonoBehaviour
             PlayerParent customPlayerParent = parentObj.GetComponentInChildren<PlayerParent>();
             myPlayerTransform = customPlayerParent.getTransform();
             int[] start = findNearestPoint(customPlayerParent.getTransform());
-            customPlayerParent.setPos(safeCalculatePosInPMap(start[0], start[1], customPlayerParent.getTransform()), start, map: this,
+            customPlayerParent.setPos(safeCalculatePosInPMap(start[0], start[1], customPlayerParent.getTransform()),
+                start, map: this,
                 fast: true);
             playerStartPos = start;
         }
@@ -164,16 +166,18 @@ public class Map : MonoBehaviour
                 newObj.GetComponent<Obstacle>().setterXZ(i, j, this);
             }
         }
+
         choosePlayerStartPointAndGoals(numberOfGoals);
     }
 
     //just for test 
-    public int checkCell(int x , int z)
+    public int checkCell(int x, int z)
     {
-        if (map[x,z] is Goal )
+        if (map[x, z] is Goal)
         {
             return 3;
-        }else if (map[x, z] is NormalWall)
+        }
+        else if (map[x, z] is NormalWall)
         {
             return 1;
         }
@@ -192,17 +196,27 @@ public class Map : MonoBehaviour
         {
             for (int j = 0; j < zSize; j++)
             {
-                if (map[i,j] is Empty)
+                if (map[i, j] is Empty)
                 {
-                    emptyList.Add(new int[]{i,j});
+                    emptyList.Add(new int[] {i, j});
                 }
             }
-            
+
         }
     }
+
     //this function must called when instance map from save system
     public void setupMapByStruct(MapDataStruct structData)
     {
+        //set up struct test
+        _testResultSolver.id = structData.id;
+        _testResultSolver.numberOfrepeat = GameManager.Instance.getNumberOfRepeat();
+        _testResultSolver.avgOfpoints = 0;
+        
+
+
+        //
+
         numberOfGoals = 0;
         intiDataStruct = structData;
         GameManager.checkMaxId(structData.id);
@@ -239,52 +253,78 @@ public class Map : MonoBehaviour
     }
 
     //reset just use for maps that loaded from save file 
-    public void resetMap()
+    //if return false its not reset. this map is removed and replaced by another map
+    //true show normal reset for class
+    public bool resetMap(int points = -1 , int steps = -1)
     {
-        if (GameManager.Instance.getManagerState() == ManagerState.heuristicTraining && repeatNumber > GameManager.Instance.getNumberOfRepeat())
+
+        if (GameManager.Instance.getManagerState() == ManagerState.heuristicTraining)
         {
-            GameManager.Instance.loadNextMap(this.gameObject , this.id);
+            updateSolverStruct(points , steps );
+            if (repeatNumber >= GameManager.Instance.getNumberOfRepeat())
+            {
+                GameManager.Instance.writetoFileSolverStruct(_testResultSolver);
+                GameManager.Instance.loadNextMap(this.gameObject, this.id);
+                return false;
+            }
         }
+
+        if (GameManager.Instance.getManagerState() == ManagerState.testFromFile)
+        {
+            updateSolverStruct(points , steps);
+            if (repeatNumber >= GameManager.Instance.getNumberOfRepeat())
+            {
+                GameManager.Instance.writetoFileSolverStruct(_testResultSolver);
+                GameManager.Instance.loadNextMap(this.gameObject, this.id);
+                return false;
+            }
+        }
+
         repeatNumber++;
+
         if (isRandomMap)
         {
             destroyElements();
             makeRandomMap();
-            return;
+            return true;
         }
+
         Collider collider = myPlayerTransform.GetComponent<CapsuleCollider>();
         collider.enabled = false;
-        
-        
+
+
         if (intiDataStruct.Equals(default(MapDataStruct)))
         {
             Debug.Log("this map cant be reset it is custom map you must save it :)");
             collider.enabled = true;
-            return;
+            return true;
         }
 
-        
+
         int[] start = intiDataStruct.playerPos.ToArray();
-        
-        
+
+
         PlayerParent playerParent = myPlayerTransform.GetComponent<PlayerParent>();
         playerParent.setUltimateAndBombNumber(intiDataStruct.ultimateNumber, intiDataStruct.bombNumber);
-        playerParent.setPos((Vector3) calculatePosInMap(start[0], start[1], playerParent.getTransform()) + Vector3.up, start, true,
+        playerParent.setPos((Vector3) calculatePosInMap(start[0], start[1], playerParent.getTransform()) + Vector3.up,
+            start, true,
             this);
 
 
         StartCoroutine(addWalls(collider));
 
         // collider.enabled = true;
-        
+
         //this part help to have better random start pos for player
         //better learn and better resualts
         if (GameManager.Instance.isRandomStart())
         {
             updateEmptyList();
             int[] newPos = emptyList[Random.Range(0, emptyList.Count)];
-            playerParent.setPos((Vector3) calculatePosInMap(newPos[0], newPos[1], playerParent.getTransform()) + Vector3.up, newPos, true,
-                    this);
+            playerParent.setPos(
+                (Vector3) calculatePosInMap(newPos[0], newPos[1], playerParent.getTransform()) + Vector3.up, newPos,
+                true,
+                this);
 
         }
 
@@ -293,24 +333,26 @@ public class Map : MonoBehaviour
 
             StartCoroutine(makeRandomGoals(collider));
         }
+
+        return true;
     }
 
     private IEnumerator makeRandomGoals(Collider collider)
     {
         yield return null;
         
-        
         //clean the goals
         for (int i = 0; i < XSize; i++)
         {
             for (int j = 0; j < zSize; j++)
             {
-                if (map[i,j] is Goal)
+                if (map[i, j] is Goal)
                 {
-                    changeMap(i,j,0);
+                    changeMap(i, j, 0);
                 }
             }
         }
+
         updateEmptyList();
         collider.enabled = false;
         for (int i = 0; i < numberOfGoals; i++)
@@ -318,18 +360,20 @@ public class Map : MonoBehaviour
             int[] newPos = emptyList[Random.Range(0, emptyList.Count)];
             PlayerParent playerParent = myPlayerTransform.GetComponent<PlayerParent>();
             int[] playerPos = playerParent.getPosIndex();
-            if (newPos[0] == playerPos[0] && newPos[1] == playerPos[1] && map[newPos[0],newPos[1]] is Empty)
+            if (newPos[0] == playerPos[0] && newPos[1] == playerPos[1] && map[newPos[0], newPos[1]] is Empty)
             {
                 //if colided with player try again
                 i--;
                 continue;
             }
-            changeMap(newPos[0],newPos[1],3);
+
+            changeMap(newPos[0], newPos[1], 3);
         }
+
         yield return null;
         collider.enabled = true;
     }
-    
+
 
     public IEnumerator addWalls(Collider collider)
     {
@@ -339,8 +383,9 @@ public class Map : MonoBehaviour
             int x = i / XSize;
             int z = i % XSize;
             changeMap(x, z, intiDataStruct.blocksStates[i]);
-            
+
         }
+
         collider.enabled = true;
     }
 
@@ -360,7 +405,7 @@ public class Map : MonoBehaviour
         _playerObj.GetComponent<PlayerParent>()
             .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
                 this);
-        
+
         for (int i = 0; i < goalNumbers && tempEmptyList.Count > 1; i++)
         {
             //handle goals setup
@@ -380,7 +425,7 @@ public class Map : MonoBehaviour
                 obj.transform.localScale.y / 2 + Y_offset,
                 j * blockSizeOfMap - zSize * blockSizeOfMap / 2 + blockSizeOfMap / 2), Quaternion.identity);
         result.transform.parent = parentObj.transform;
-        
+
         return result;
     }
 
@@ -492,9 +537,10 @@ public class Map : MonoBehaviour
         res.blockSize = blockSizeOfMap;
         res.XSize = this.XSize;
         res.ZSize = this.zSize;
-        myPlayerTransform.GetComponent<PlayerParent>().getUltimateAndBombNumber(ref res.ultimateNumber, ref res.bombNumber);
+        myPlayerTransform.GetComponent<PlayerParent>()
+            .getUltimateAndBombNumber(ref res.ultimateNumber, ref res.bombNumber);
         List<int> states = mapStatesAsInt();
-        
+
         res.blocksStates = states;
         res.playerPos = playerStartPos.ToList();
         return res;
@@ -548,4 +594,36 @@ public class Map : MonoBehaviour
         this.id = GameManager.getId();
         GameManager.Instance.saveMap(id);
     }
+
+    public void updateSolverStruct(int point,int stepNumbers)
+    {
+        if (point == -1 || stepNumbers < 3)
+        {
+            Debug.Log("some thing wrong i got -1");
+            return;
+        }
+        float avgPlus = (float)point / GameManager.Instance.getNumberOfRepeat();
+        float avgStepPlus = (float)stepNumbers / GameManager.Instance.getNumberOfRepeat();
+        if (_testResultSolver.maxOfGoalReach < point)
+        {
+            _testResultSolver.maxOfGoalReach = point;
+        }
+
+        _testResultSolver.avgOfpoints += avgPlus;
+        _testResultSolver.stepNumber += avgStepPlus;
+    }
+
+    public bool canReset()
+    {
+        if (repeatNumber== numberOfGoals && 
+                (GameManager.Instance.getManagerState() == ManagerState.heuristicTraining 
+                 ||GameManager.Instance.getManagerState() == ManagerState.testFromFile ))
+        {
+            return false;
+        }
+
+        return true;
+    }
+    
+
 }
