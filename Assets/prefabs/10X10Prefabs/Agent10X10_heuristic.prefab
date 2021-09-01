@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2940803153255591978}
   - component: {fileID: 9136965251050409692}
   - component: {fileID: 1837589220716540669}
+  - component: {fileID: -4464975331064998145}
   m_Layer: 0
   m_Name: Agent10X10_heuristic
   m_TagString: Player
@@ -184,6 +185,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DecisionPeriod: 20
   TakeActionsBetweenDecisions: 0
+--- !u!114 &-4464975331064998145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6030020883575814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2902496c0120472b90269f94a0aec7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Record: 1
+  NumStepsToRecord: 0
+  DemonstrationName: try1
+  DemonstrationDirectory: Demos
 --- !u!1 &7853211680506473648
 GameObject:
   m_ObjectHideFlags: 0

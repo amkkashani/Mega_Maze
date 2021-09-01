@@ -340,7 +340,7 @@ MonoBehaviour:
     _structsMap: []
   randomPosReset: 1
   randomPosTarget: 1
-  numberOfrepeat: 5
+  numberOfrepeat: 7
   mapDistance: 60
   removeId: 0
 --- !u!4 &987629007

@@ -257,7 +257,7 @@ public class Map : MonoBehaviour
     //true show normal reset for class
     public bool resetMap(int points = -1 , int steps = -1)
     {
-
+        int[] lastPos = myPlayerTransform.GetComponent<PlayerParent>().getPosIndex();
         if (GameManager.Instance.getManagerState() == ManagerState.heuristicTraining)
         {
             updateSolverStruct(points , steps );
@@ -299,7 +299,7 @@ public class Map : MonoBehaviour
             collider.enabled = true;
             return true;
         }
-
+        
 
         int[] start = intiDataStruct.playerPos.ToArray();
 
@@ -331,13 +331,13 @@ public class Map : MonoBehaviour
         if (GameManager.Instance.isRandomTarget())
         {
 
-            StartCoroutine(makeRandomGoals(collider));
+            StartCoroutine(makeRandomGoals(collider,lastPos));
         }
 
         return true;
     }
 
-    private IEnumerator makeRandomGoals(Collider collider)
+    private IEnumerator makeRandomGoals(Collider collider,int[] lastPlayerPos)
     {
         yield return null;
         
@@ -360,7 +360,8 @@ public class Map : MonoBehaviour
             int[] newPos = emptyList[Random.Range(0, emptyList.Count)];
             PlayerParent playerParent = myPlayerTransform.GetComponent<PlayerParent>();
             int[] playerPos = playerParent.getPosIndex();
-            if (newPos[0] == playerPos[0] && newPos[1] == playerPos[1] && map[newPos[0], newPos[1]] is Empty)
+            if ((newPos[0] == playerPos[0] && newPos[1] == playerPos[1]) || ! (map[newPos[0], newPos[1]] is Empty) || 
+                (newPos[0] == lastPlayerPos[0] && newPos[1] == lastPlayerPos[1]))
             {
                 //if colided with player try again
                 i--;
@@ -615,7 +616,7 @@ public class Map : MonoBehaviour
 
     public bool canReset()
     {
-        if (repeatNumber== numberOfGoals && 
+        if (repeatNumber== GameManager.Instance.getNumberOfRepeat() && 
                 (GameManager.Instance.getManagerState() == ManagerState.heuristicTraining 
                  ||GameManager.Instance.getManagerState() == ManagerState.testFromFile ))
         {
