@@ -335,6 +335,7 @@ public class PlayerAgent : Agent ,PlayerParent
         }
         else
         {
+            //just for result phase (last phase)
             this.gameObject.SetActive(false);
             map.resetMap(points, StepCount);
         }

@@ -34,7 +34,7 @@ public class Map : MonoBehaviour
     private int[] playerStartPos = null;
     private List<int[]> emptyList;
     private Vector3 originPivot;
-    private MapDataStruct intiDataStruct;
+    private MapDataStruct intialDataStruct;
     private Transform myPlayerTransform;
     private int repeatNumber = 0;
     private TestResultSolver _testResultSolver = new TestResultSolver();
@@ -218,7 +218,8 @@ public class Map : MonoBehaviour
         //
 
         numberOfGoals = 0;
-        intiDataStruct = structData;
+        repeatNumber = 0;
+        intialDataStruct = structData;
         GameManager.checkMaxId(structData.id);
         this.id = structData.id;
         XSize = structData.XSize;
@@ -252,6 +253,50 @@ public class Map : MonoBehaviour
         tempPlayerParent.setUltimateAndBombNumber(structData.ultimateNumber, structData.bombNumber);
     }
 
+    public void remakeMapByStruct(MapDataStruct structData , Transform myPlayerTransform)
+    {
+        _testResultSolver.id = structData.id;
+        _testResultSolver.numberOfrepeat = GameManager.Instance.getNumberOfRepeat();
+        _testResultSolver.avgOfpoints = 0;
+        
+
+
+        //
+
+        numberOfGoals = 0;
+        repeatNumber = 0;
+        intialDataStruct = structData;
+        this.id = structData.id;
+        XSize = structData.XSize;
+        zSize = structData.ZSize;
+        blockSizeOfMap = structData.blockSize;
+        transform.localScale = new Vector3(XSize * blockSizeOfMap, 0.3f, zSize * blockSizeOfMap);
+
+        updateEmptyList();
+        //make all blocks
+        for (int i = 0; i < structData.blocksStates.Count; i++)
+        {
+            int x = i / XSize;
+            int z = i % XSize;
+            changeMap(x, z, structData.blocksStates[i]);
+            if (structData.blocksStates[i] == 3)
+            {
+                numberOfGoals++;
+            }
+        }
+
+        //find all users
+        int[] start = structData.playerPos.ToArray();
+        this.myPlayerTransform = myPlayerTransform;
+        playerStartPos = start;
+        PlayerParent tempPlayerParent = myPlayerTransform.GetComponent<PlayerParent>();
+        // _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
+        tempPlayerParent
+            .setPos((Vector3) calculatePosInMap(start[0], start[1], myPlayerTransform.transform) + Vector3.up, start, true,
+                this);
+        tempPlayerParent.setUltimateAndBombNumber(structData.ultimateNumber, structData.bombNumber);
+    }
+
     //reset just use for maps that loaded from save file 
     //if return false its not reset. this map is removed and replaced by another map
     //true show normal reset for class
@@ -264,8 +309,10 @@ public class Map : MonoBehaviour
             if (repeatNumber >= GameManager.Instance.getNumberOfRepeat())
             {
                 GameManager.Instance.writetoFileSolverStruct(_testResultSolver);
-                GameManager.Instance.loadNextMap(this.gameObject, this.id);
-                return false;
+                // GameManager.Instance.loadNextMap(this.gameObject, this.id);
+                MapDataStruct temp = GameManager.Instance.getNextMapStruct(this.id);
+                remakeMapByStruct(temp,myPlayerTransform);
+                return true;
             }
         }
 
@@ -293,7 +340,7 @@ public class Map : MonoBehaviour
         collider.enabled = false;
 
 
-        if (intiDataStruct.Equals(default(MapDataStruct)))
+        if (intialDataStruct.Equals(default(MapDataStruct)))
         {
             Debug.Log("this map cant be reset it is custom map you must save it :)");
             collider.enabled = true;
@@ -301,11 +348,11 @@ public class Map : MonoBehaviour
         }
         
 
-        int[] start = intiDataStruct.playerPos.ToArray();
+        int[] start = intialDataStruct.playerPos.ToArray();
 
 
         PlayerParent playerParent = myPlayerTransform.GetComponent<PlayerParent>();
-        playerParent.setUltimateAndBombNumber(intiDataStruct.ultimateNumber, intiDataStruct.bombNumber);
+        playerParent.setUltimateAndBombNumber(intialDataStruct.ultimateNumber, intialDataStruct.bombNumber);
         playerParent.setPos((Vector3) calculatePosInMap(start[0], start[1], playerParent.getTransform()) + Vector3.up,
             start, true,
             this);
@@ -379,11 +426,11 @@ public class Map : MonoBehaviour
     public IEnumerator addWalls(Collider collider)
     {
         yield return null;
-        for (int i = 0; i < intiDataStruct.blocksStates.Count; i++)
+        for (int i = 0; i < intialDataStruct.blocksStates.Count; i++)
         {
             int x = i / XSize;
             int z = i % XSize;
-            changeMap(x, z, intiDataStruct.blocksStates[i]);
+            changeMap(x, z, intialDataStruct.blocksStates[i]);
 
         }
 
@@ -617,8 +664,8 @@ public class Map : MonoBehaviour
     public bool canReset()
     {
         if (repeatNumber== GameManager.Instance.getNumberOfRepeat() && 
-                (GameManager.Instance.getManagerState() == ManagerState.heuristicTraining 
-                 ||GameManager.Instance.getManagerState() == ManagerState.testFromFile ))
+                (/*GameManager.Instance.getManagerState() == ManagerState.heuristicTraining
+                 ||*/GameManager.Instance.getManagerState() == ManagerState.testFromFile ))
         {
             return false;
         }

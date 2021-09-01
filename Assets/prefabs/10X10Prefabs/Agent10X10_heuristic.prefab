@@ -199,7 +199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Record: 1
   NumStepsToRecord: 0
-  DemonstrationName: try1
+  DemonstrationName: try4
   DemonstrationDirectory: Demos
 --- !u!1 &7853211680506473648
 GameObject:

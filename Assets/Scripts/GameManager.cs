@@ -144,14 +144,36 @@ public class GameManager : Singleton<GameManager>
 
             }
         }
-        
+
         if (isFind)
         {
             MapDataStruct mapDataStruct = ListOfMapsStruct._structsMap[result];
             makeMapByStruct(mapDataStruct, Vector3.zero);
         }
-        
-        
+    }
+
+    public MapDataStruct getNextMapStruct(int id)
+    {
+        int result = 0;
+        bool isFind = false;
+        //if i is last item there is no more item for checking
+        for (int i = 0; i < ListOfMapsStruct._structsMap.Count - 1; i++)
+        {
+            if (id == ListOfMapsStruct._structsMap[i].id)
+            {
+                result = i + 1;
+                isFind = true;
+                break;
+
+            }
+        }
+        if (isFind)
+        {
+            MapDataStruct mapDataStruct = ListOfMapsStruct._structsMap[result];
+            return mapDataStruct;
+        }
+
+        return default(MapDataStruct);
     }
 
     private void makeMapByStruct(MapDataStruct mapDataStruct , Vector3 pos)

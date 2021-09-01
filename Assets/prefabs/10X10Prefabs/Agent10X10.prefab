@@ -24099,7 +24099,6 @@ GameObject:
   - component: {fileID: 7434803962200776097}
   - component: {fileID: 5306974448008873897}
   - component: {fileID: 2280220797365893471}
-  - component: {fileID: -2302350187358304021}
   m_Layer: 0
   m_Name: Agent10X10
   m_TagString: Player
@@ -24254,19 +24253,3 @@ MonoBehaviour:
   bombNumber: 5
   ultimateNumber: 5
   ultimateEffect: {fileID: 979488561861948429}
---- !u!114 &-2302350187358304021
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7024649507283518341}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2902496c0120472b90269f94a0aec7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Record: 1
-  NumStepsToRecord: 0
-  DemonstrationName: try2
-  DemonstrationDirectory: Demos
