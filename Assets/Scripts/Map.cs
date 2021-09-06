@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
@@ -23,9 +24,12 @@ public class Map : MonoBehaviour
     [SerializeField] private GameObject oneWayWall;
     [SerializeField] private int numberOfGoals;
     [SerializeField] private GameObject _goal; //3
+    [SerializeField] private GameObject checkpointObj; //this object use for notify the object reached to specific point
 
+    
     [SerializeField] private GameObject parentObj;
 
+    
 
 
     [SerializeField] private bool isRandomMap = true;
@@ -64,6 +68,8 @@ public class Map : MonoBehaviour
 
     public void Start()
     {
+        createCheckpoints();
+        
         if (loadedMap)
         {
             return;
@@ -127,9 +133,38 @@ public class Map : MonoBehaviour
                 fast: true);
             playerStartPos = start;
         }
-        // GameManager.Instance.saveMap(1); //todo must remove 
-        // GameManager.Instance.saveMap(2);
+        
+        
     }
+
+    private List<GameObject> checkpointList = new List<GameObject>();
+    private void createCheckpoints()
+    {
+        // create checkpoint object
+        if (checkpointObj != null)
+        {
+            for (int i = 0; i < XSize; i++)
+            {
+                for (int j = 0; j < zSize; j++)
+                {
+                    Vector3 pos = safeCalculatePosInPMap(i, j, checkpointObj.transform);
+                    GameObject newObj = Instantiate(checkpointObj, pos, quaternion.identity);
+                    checkpointList.Add(newObj);
+                    newObj.transform.parent = parentObj.transform;
+                }
+            }
+        }
+    }
+    
+    private void refreshCheckpoints()
+    {
+        //activate all checkpoint that is made in create checkpoint function
+        for (int i = 0; i < checkpointList.Count; i++)
+        {
+            checkpointList[i].SetActive(true);
+        }
+    }
+    
 
     private void makeRandomMap()
     {
@@ -302,6 +337,7 @@ public class Map : MonoBehaviour
     //true show normal reset for class
     public bool resetMap(int points = -1 , int steps = -1)
     {
+        refreshCheckpoints(); // reset all checkpoints;
         int[] lastPos = myPlayerTransform.GetComponent<PlayerParent>().getPosIndex();
         if (GameManager.Instance.getManagerState() == ManagerState.heuristicTraining)
         {
