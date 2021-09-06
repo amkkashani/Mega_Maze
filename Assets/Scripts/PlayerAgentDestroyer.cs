@@ -285,7 +285,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     public void addPoint(int value)
     {
         this.points += value;
-        AddReward(value*100);
+        AddReward(-value*100);
         if (map.getNumberOfGoals() == points)
         {
             //end episode 
@@ -339,8 +339,8 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         return this.transform;
     }
 
-    public void reachedThePoint()
+    public void rechedTheCheckPoint()
     {
-        
+        AddReward(10);
     }
 }

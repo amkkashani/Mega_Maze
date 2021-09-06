@@ -24099,6 +24099,7 @@ GameObject:
   - component: {fileID: 7434803962200776097}
   - component: {fileID: 5306974448008873897}
   - component: {fileID: 2280220797365893471}
+  - component: {fileID: -2678987602433373381}
   m_Layer: 0
   m_Name: Agent10X10
   m_TagString: Player
@@ -24224,10 +24225,10 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
-  m_BehaviorType: 1
+  m_BehaviorType: 0
   m_BehaviorName: MazeSolver_10X10
   TeamId: 0
-  m_UseChildSensors: 1
+  m_UseChildSensors: 0
   m_UseChildActuators: 1
   m_ObservableAttributeHandling: 0
 --- !u!114 &2280220797365893471
@@ -24253,3 +24254,17 @@ MonoBehaviour:
   bombNumber: 5
   ultimateNumber: 5
   ultimateEffect: {fileID: 979488561861948429}
+--- !u!114 &-2678987602433373381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7024649507283518341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DecisionPeriod: 20
+  TakeActionsBetweenDecisions: 0
