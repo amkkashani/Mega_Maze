@@ -202,7 +202,7 @@ public class PlayerAgent : Agent ,PlayerParent
         // index [1]=> 0:not to do , 1: activate the ultimate
         // index [2]=> 0:not to do , 1: activate the bomb
         // by default we do nothing
-        if (lastAction.Count != null)
+        if (lastAction.Count != 0)
         {
             Debug.Log(lastAction[0]);
             Debug.Log("step count :" + StepCount + "x , z :" + this.transform.position.x +" , "+ transform.position.z);

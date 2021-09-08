@@ -331,7 +331,6 @@ MonoBehaviour:
   mapObj: {fileID: 2558436945468733009, guid: 43615d1c765d6404799c4309b3f84caf, type: 3}
   _maps:
   - {fileID: 0}
-  loadFromSavedData: 1
   _managerState: 3
   saveFileName: 10X10_train2
   saveResultFileName: res_solver.csv
@@ -340,7 +339,7 @@ MonoBehaviour:
     _structsMap: []
   randomPosReset: 1
   randomPosTarget: 1
-  numberOfrepeat: 2
+  numberOfrepeat: 15
   mapDistance: 60
   removeId: 0
 --- !u!4 &987629007

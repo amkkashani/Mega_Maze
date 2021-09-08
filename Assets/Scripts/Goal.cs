@@ -11,10 +11,10 @@ public class Goal : Obstacle
             Debug.Log("i catched by pleayer");
             other.GetComponent<PlayerParent>()?.addPoint(1);
             wallDestruction();
-            if (other.GetComponent<PlayerParent>().getPoint() == map.getNumberOfGoals())
-            {
-                //todo finish
-            }
+            // if (other.GetComponent<PlayerParent>().getPoint() == map.getNumberOfGoals())
+            // {
+            //     //todo finish
+            // }
         }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CheckPoint : MonoBehaviour
 {
-    void OnTriggerExit(Collider other)
+    void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
         {

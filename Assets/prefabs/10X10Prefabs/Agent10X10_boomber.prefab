@@ -24099,7 +24099,7 @@ GameObject:
   - component: {fileID: 6583565384714671513}
   - component: {fileID: 2487989108797684966}
   - component: {fileID: 7424446545969083581}
-  - component: {fileID: 4356815432136283783}
+  - component: {fileID: 3457699101377284269}
   m_Layer: 0
   m_Name: Agent10X10_boomber
   m_TagString: Player
@@ -24248,13 +24248,13 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 300
   minmumAcceptableDistance: 0.1
-  reachSpeedFactor: 0.1
+  reachSpeedFactor: 0.9
   explosionRadius: 3
   points: 0
   bombNumber: 1000
   ultimateNumber: 1000
   ultimateEffect: {fileID: 3596098677431335989}
---- !u!114 &4356815432136283783
+--- !u!114 &3457699101377284269
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -24266,5 +24266,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 20
+  DecisionPeriod: 5
   TakeActionsBetweenDecisions: 0

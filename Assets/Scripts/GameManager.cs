@@ -10,7 +10,6 @@ public class GameManager : Singleton<GameManager>
     // public bool learningMode = true;
     [SerializeField] private GameObject mapObj;
     [SerializeField] private List<Map> _maps;
-    [SerializeField] private bool loadFromSavedData;
     [SerializeField] private ManagerState _managerState;
     [SerializeField] private string saveFileName;
     [SerializeField] private string saveResultFileName;
@@ -50,9 +49,17 @@ public class GameManager : Singleton<GameManager>
     
     void Awake()
     {
-        // load
-        ListOfMapsStruct = loadMapsStructs();
-        // Debug.Log("here : " + ListOfMapsStruct._structsMap.Count );
+        try
+        {
+            // load
+            ListOfMapsStruct = loadMapsStructs();
+            // Debug.Log("here : " + ListOfMapsStruct._structsMap.Count );
+        }
+        catch (Exception e)
+        {
+            Debug.Log("load directory not found");
+        }
+        
         
         //find maxid that has been saved 
         for (int i = 0; i < ListOfMapsStruct._structsMap.Count; i++)
@@ -220,7 +227,7 @@ public class GameManager : Singleton<GameManager>
         FileManager.LoadFromFile("saveFiles//"+saveFileName, out res);
         Debug.Log(res);
         loadedStructs.LoadFromJson(res);
-        Debug.Log(loadedStructs._structsMap[0].blocksStates.Count);
+        // Debug.Log(loadedStructs._structsMap[0].blocksStates.Count);
         return loadedStructs;
     }
 

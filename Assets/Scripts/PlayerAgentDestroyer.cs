@@ -53,8 +53,10 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
 
     public void setUltimateAndBombNumber(int ultimate, int bombNumber)
     {
-        this.ultimateNumber = ultimate;
-        this.bombNumber = bombNumber;
+        // bomber agent has infity ammo of bombs
+         this.ultimateNumber = 1000;
+         this.bombNumber = 1000;
+            
     }
     
     
@@ -202,7 +204,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         // index [1]=> 0:not to do , 1: activate the ultimate
         // index [2]=> 0:not to do , 1: activate the bomb
         // by default we do nothing
-        if (lastAction.Count != null)
+        if (lastAction.Count != 0)
         {
             Debug.Log(lastAction[0]);
             Debug.Log("step count :" + StepCount + "x , z :" + this.transform.position.x +" , "+ transform.position.z);
@@ -227,7 +229,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         }
 
         ultimateIsActive = true;
-        ultimateNumber--;
+        // ultimateNumber--;
         ultimateEffect.SetActive(true);
     }
     
@@ -254,7 +256,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         {
             return; 
         }
-        bombNumber--;
+        // bombNumber--;
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
         foreach (var hitCollider in hitColliders)
         {
@@ -341,6 +343,6 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
 
     public void rechedTheCheckPoint()
     {
-        AddReward(10);
+        AddReward(20);
     }
 }

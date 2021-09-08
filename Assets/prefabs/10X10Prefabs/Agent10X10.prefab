@@ -24099,7 +24099,7 @@ GameObject:
   - component: {fileID: 7434803962200776097}
   - component: {fileID: 5306974448008873897}
   - component: {fileID: 2280220797365893471}
-  - component: {fileID: -2678987602433373381}
+  - component: {fileID: 5014482735256242289}
   m_Layer: 0
   m_Name: Agent10X10
   m_TagString: Player
@@ -24254,7 +24254,7 @@ MonoBehaviour:
   bombNumber: 5
   ultimateNumber: 5
   ultimateEffect: {fileID: 979488561861948429}
---- !u!114 &-2678987602433373381
+--- !u!114 &5014482735256242289
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
