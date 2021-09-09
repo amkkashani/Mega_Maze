@@ -137,8 +137,10 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         switch (vectorAction[0])
         {
             case 0: // end episod
-                AddReward(-6);
-                finishLevel();
+                // in this scenario agent must continue the game until end
+                 AddReward(-0.5f);
+                // finishLevel();
+                Debug.Log("agent wants to stop");
                 break;
             case 5:  //area bomb
                 destroyEnvBomb();
@@ -152,7 +154,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
                 }
                 else
                 {
-                    AddReward(-0.3f); //useless action
+                    AddReward(-0.2f); //useless action
                 }
                 break;
             
@@ -164,7 +166,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
                     posIndex[0] += 1;
                 }else
                 {
-                    AddReward(-0.3f); //useless action
+                    AddReward(-0.2f); //useless action
                 }    
                 break;
             case 3: // go down
@@ -175,7 +177,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
                     posIndex[1] -= 1;
                 }else
                 {
-                    AddReward(-0.3f); //useless action
+                    AddReward(-0.2f); //useless action
                 }
                 break;
             case 4: // go left
@@ -186,7 +188,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
                     posIndex[0] -= 1;
                 }else
                 {
-                    AddReward(-0.3f); //useless action
+                    AddReward(-0.2f); //useless action
                 }  
                 break;
             case 6: //oneWallBomb
@@ -194,7 +196,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
                 break;
         }
 
-        AddReward(-50.0f/MaxStep);
+        AddReward(-30.0f/MaxStep);
     }
 
     public override void Heuristic(float[] actionsOut)
@@ -221,7 +223,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
 
     private void activeUltimate()
     {
-        AddReward(-1);
+        // AddReward(-1);
         if (ultimateIsActive || ultimateNumber == 0)
         {
             AddReward(-1);//this minus reward teach agent dont waste action with repeating useless actions
@@ -251,7 +253,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
 
     private void destroyEnvBomb()
     {
-        AddReward(-1);
+        // AddReward(-1);
         if (bombNumber == 0)
         {
             return; 
@@ -287,16 +289,17 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     public void addPoint(int value)
     {
         this.points += value;
-        AddReward(-value*100);
-        if (map.getNumberOfGoals() == points)
-        {
-            //end episode 
-            Debug.Log("end episod");
-            // Debug.Log(posIndex[0] +" -- " + posIndex[1]);
-            // map.resetMap();
-            finishLevel();
-            
-        }
+        //there is no gain for catching goal in this senario
+        // AddReward(-value*100);
+        // if (map.getNumberOfGoals() == points)
+        // {
+        //     //end episode 
+        //     Debug.Log("end episod");
+        //     // Debug.Log(posIndex[0] +" -- " + posIndex[1]);
+        //     // map.resetMap();
+        //     finishLevel();
+        //     
+        // }
         
         
     }
@@ -324,6 +327,19 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         {
             sensor.AddObservation(states[i]);
         }
+
+        List<GameObject> checkpoints = map.getCheckPointsState();
+        for (int i = 0; i < checkpoints.Count; i++)
+        {
+            if (checkpoints[i].activeSelf)
+            {
+                sensor.AddObservation(1);
+            }
+            else
+            {
+                sensor.AddObservation(0);
+            }
+        }
         sensor.AddObservation(posIndex[0]);
         sensor.AddObservation(posIndex[1]);
         sensor.AddObservation(bombNumber);
@@ -343,6 +359,12 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
 
     public void rechedTheCheckPoint()
     {
-        AddReward(20);
+        AddReward(1);
+        if (map.checkAllCheckpointsCatched(points))
+        {
+            Debug.Log("completed mission");
+            AddReward(50);
+            finishLevel();
+        }
     }
 }

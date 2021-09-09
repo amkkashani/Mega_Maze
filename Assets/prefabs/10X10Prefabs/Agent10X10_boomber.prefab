@@ -24214,8 +24214,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 105
-    NumStackedVectorObservations: 3
+    VectorObservationSize: 205
+    NumStackedVectorObservations: 2
     m_ActionSpec:
       m_NumContinuousActions: 0
       BranchSizes: 07000000
@@ -24246,9 +24246,9 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 300
+  MaxStep: 5000
   minmumAcceptableDistance: 0.1
-  reachSpeedFactor: 0.9
+  reachSpeedFactor: 1
   explosionRadius: 3
   points: 0
   bombNumber: 1000
@@ -24266,5 +24266,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 5
+  DecisionPeriod: 4
   TakeActionsBetweenDecisions: 0

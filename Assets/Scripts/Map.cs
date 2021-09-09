@@ -164,6 +164,32 @@ public class Map : MonoBehaviour
             checkpointList[i].SetActive(true);
         }
     }
+
+    public bool checkAllCheckpointsCatched(int point)
+    {
+        int sum = 0;
+        for (int i = 0; i < checkpointList.Count; i++)
+        {
+            if (checkpointList[i].activeSelf)
+            {
+                sum++;
+            }
+        }
+
+        if ( point == sum )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public List<GameObject> getCheckPointsState()
+    {
+        return checkpointList;
+    }
     
 
     private void makeRandomMap()
@@ -599,7 +625,7 @@ public class Map : MonoBehaviour
                 newObj.GetComponent<Obstacle>().setterXZ(oldX, oldY, this);
                 break;
             case 3:
-                Debug.Log("goal created");
+                // Debug.Log("goal created");
                 newObj = instanceInMap(_goal, oldX, oldY, 0.5f);
                 newObj.GetComponent<Obstacle>().setterXZ(oldX, oldY, this);
                 // Debug.Log(newObj.transform.position);
