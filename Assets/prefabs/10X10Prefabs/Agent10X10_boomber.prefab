@@ -24254,6 +24254,7 @@ MonoBehaviour:
   bombNumber: 1000
   ultimateNumber: 1000
   ultimateEffect: {fileID: 3596098677431335989}
+  catchedCheckpoint: 0
 --- !u!114 &3457699101377284269
 MonoBehaviour:
   m_ObjectHideFlags: 0

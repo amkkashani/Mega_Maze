@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Unity.MLAgents;
 using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
@@ -215,40 +216,11 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         {
             Debug.Log("empty last action list ");
         }
-        // if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-        // {
-        //     actionsOut[0] = 1;
-        //     
-        // }
-        // else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-        // {
-        //     actionsOut[0] = 3;
-        // }
-        // else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-        // {
-        //     actionsOut[0] = 4;
-        // }
-        // else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-        // {
-        //     actionsOut[0] = 2;
-        //     
-        // }
-        // if (Input.GetKey(KeyCode.Keypad0) && bombNumber != 0)
-        // {
-        //     actionsOut[0] = 5;
-        //     
-        // }
-        //
-        // if (Input.GetKey(KeyCode.Keypad1))
-        // {
-        //     actionsOut[0] = 6;
-        // }
     }
 
     private void activeUltimate()
     {
-        AddReward(-5);
-        if (ultimateIsActive || ultimateNumber == 0)
+        if (ultimateIsActive)
         {
             AddReward(-1);//this minus reward teach agent dont waste action with repeating useless actions
             return; // if ultimate is already active no need to turn it on
@@ -277,11 +249,6 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
 
     private void destroyEnvBomb()
     {
-        AddReward(-5);
-        if (bombNumber == 0)
-        {
-            return; 
-        }
         bombNumber--;
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
         foreach (var hitCollider in hitColliders)
@@ -313,7 +280,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     public void addPoint(int value)
     {
         this.points += value;
-        AddReward(value*100);
+        // AddReward(value*100);
         // if (map.getNumberOfGoals() == points)
         // {
         //     //end episode 
@@ -323,6 +290,8 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         //     finishLevel();
         //     
         // }
+        
+        
     }
 
     private void finishLevel()
@@ -367,11 +336,14 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         return this.transform;
     }
 
+
+    [SerializeField]private int catchedCheckpoint = 0;
     public void rechedTheCheckPoint()
     {
         Debug.Log("reached");
-        AddReward(1);
-        if (map.checkAllCheckpointsCatched(points))
+        catchedCheckpoint++;
+        AddReward(5);
+        if (map.checkAllCheckpointsCatched(catchedCheckpoint))
         {
             Debug.Log("completed mission");
             AddReward(50);
