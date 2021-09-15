@@ -24214,7 +24214,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 205
+    VectorObservationSize: 105
     NumStackedVectorObservations: 2
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -24246,7 +24246,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 5000
+  MaxStep: 1000
   minmumAcceptableDistance: 0.1
   reachSpeedFactor: 1
   explosionRadius: 3

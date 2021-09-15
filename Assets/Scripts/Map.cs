@@ -723,11 +723,13 @@ public class Map : MonoBehaviour
         _testResultSolver.stepNumber += avgStepPlus;
     }
 
+    
+    //based on number of repeat
     public bool canReset()
     {
         if (repeatNumber== GameManager.Instance.getNumberOfRepeat() && 
-                (/*GameManager.Instance.getManagerState() == ManagerState.heuristicTraining
-                 ||*/GameManager.Instance.getManagerState() == ManagerState.testFromFile ))
+                (GameManager.Instance.getManagerState() == ManagerState.heuristicTraining
+                 ||GameManager.Instance.getManagerState() == ManagerState.testFromFile ))
         {
             return false;
         }

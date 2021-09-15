@@ -74,7 +74,7 @@ public class GameManager : Singleton<GameManager>
         // this line clear defualt array list with null values when we use save file we must clean the list
         _maps = new List<Map>();
         
-        if (_managerState == ManagerState.trainFromFile)
+        if (_managerState == ManagerState.trainFromFile || _managerState == ManagerState.trainBomberFromFile)
         {
             for (int i = 0; i < ListOfMapsStruct._structsMap.Count; i++)
             {
@@ -94,7 +94,7 @@ public class GameManager : Singleton<GameManager>
                 _maps.Add(tempMap.GetComponent<Map>());
                 Debug.Log("i find the map");
             }
-        }else if (_managerState == ManagerState.testFromFile)
+        /*}else if (_managerState == ManagerState.testFromFile)
         {
             //test manager Setup
             //manually u must setup map and agent for this
@@ -102,7 +102,7 @@ public class GameManager : Singleton<GameManager>
             {
                 //make first map
                 makeMapByStruct(ListOfMapsStruct._structsMap[0],Vector3.zero);
-            }
+            }*/
             
         }else if (_managerState == ManagerState.heuristicTraining)
         {
@@ -304,7 +304,8 @@ public enum ManagerState
     testFromFile,
     trainFromFile,
     customMap,
-    heuristicTraining
+    heuristicTraining,
+    trainBomberFromFile
 }
 
 public struct TestResultSolver
