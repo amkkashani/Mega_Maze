@@ -135,8 +135,8 @@ public class PlayerAgent : Agent ,PlayerParent
         switch (vectorAction[0])
         {
             case 0: // end episod
-                AddReward(-6);
-                finishLevel();
+                AddReward(-10);
+                // finishLevel();
                 break;
             case 5:  //area bomb
                 destroyEnvBomb();
@@ -192,7 +192,7 @@ public class PlayerAgent : Agent ,PlayerParent
                 break;
         }
 
-        AddReward(-50.0f/MaxStep);
+        AddReward(-0.3f);
     }
 
     public override void Heuristic(float[] actionsOut)
@@ -247,7 +247,7 @@ public class PlayerAgent : Agent ,PlayerParent
 
     private void activeUltimate()
     {
-        AddReward(-1);
+        AddReward(-5);
         if (ultimateIsActive || ultimateNumber == 0)
         {
             AddReward(-1);//this minus reward teach agent dont waste action with repeating useless actions
@@ -277,7 +277,7 @@ public class PlayerAgent : Agent ,PlayerParent
 
     private void destroyEnvBomb()
     {
-        AddReward(-1);
+        AddReward(-5);
         if (bombNumber == 0)
         {
             return; 
@@ -345,10 +345,12 @@ public class PlayerAgent : Agent ,PlayerParent
     
     public override void CollectObservations(VectorSensor sensor)
     {
+        Debug.Log("observed");
         List<int> states = map.mapStatesAsInt();
         for (int i = 0; i < states.Count; i++)
         {
             sensor.AddObservation(states[i]);
+          
         }
         sensor.AddObservation(posIndex[0]);
         sensor.AddObservation(posIndex[1]);

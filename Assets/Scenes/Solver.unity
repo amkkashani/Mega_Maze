@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &705507994
 Light:
   m_ObjectHideFlags: 0
@@ -233,7 +233,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &963194226
 AudioListener:
   m_ObjectHideFlags: 0
@@ -328,12 +328,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be63afbd32d07344297c2dc742fef021, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapObj: {fileID: 7388464406450436088, guid: 053ed23e5457d514fb48a995b0c5c611, type: 3}
+  mapObj: {fileID: 2558436945468733009, guid: 43615d1c765d6404799c4309b3f84caf, type: 3}
   _maps: []
   _managerState: 1
-  saveFileName: 10X10BombersTrain_p1
+  saveFileName: 10X10StepByStep_L4
   saveResultFileName: 
-  playerGameObject: {fileID: 6704925929272822717, guid: 5c8b0940a51507f458e7fb6d68626da0, type: 3}
+  playerGameObject: {fileID: 7024649507283518341, guid: 7172a47ae9b0afa42abc41d7008fd556, type: 3}
   ListOfMapsStruct:
     _structsMap: []
   randomPosReset: 1

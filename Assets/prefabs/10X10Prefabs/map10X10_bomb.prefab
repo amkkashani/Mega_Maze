@@ -147,9 +147,9 @@ MonoBehaviour:
   normallWall: {fileID: 2143099084084103317, guid: 2cdc28bc08dc34348b5f838ee2c3dd4e, type: 3}
   chanceOfOnWayWall: 1
   oneWayWall: {fileID: 1895173277673449560, guid: 15baecdd774569842aa09b1cede45afa, type: 3}
-  numberOfGoals: 2
+  numberOfGoals: 3
   _goal: {fileID: 6119692456812564762, guid: 7c0cb22a6e65b3e40b33f272b1e07b62, type: 3}
   checkpointObj: {fileID: 7386308898505115421, guid: 00c8b0ce64ee3f64499f912f0b524f43, type: 3}
   parentObj: {fileID: 7388464405897582759}
   isRandomMap: 0
-  loadedMap: 0
+  loadedMap: 1

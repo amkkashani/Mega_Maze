@@ -134,11 +134,12 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     
     public override void OnActionReceived(float[] vectorAction)
     {
+        Debug.Log("action");
         switch (vectorAction[0])
         {
             case 0: // end episod
                 // in this scenario agent must continue the game until end
-                 AddReward(-0.5f);
+                 AddReward(-5f);
                 // finishLevel();
                 Debug.Log("agent wants to stop");
                 break;
@@ -322,13 +323,16 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     
     public override void CollectObservations(VectorSensor sensor)
     {
+        Debug.Log("observed");
         List<int> states = map.mapStatesAsInt();
+        Debug.Log(states.Count);
         for (int i = 0; i < states.Count; i++)
         {
             sensor.AddObservation(states[i]);
         }
 
         List<GameObject> checkpoints = map.getCheckPointsState();
+        // Debug.Log(checkpoints.Count);
         for (int i = 0; i < checkpoints.Count; i++)
         {
             if (checkpoints[i].activeSelf)

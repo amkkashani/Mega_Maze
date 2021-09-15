@@ -129,7 +129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minmumAcceptableDistance: 0.1
   reachSpeedFactor: 0.05
-  explosionRadius: 1
+  explosionRadius: 3
   points: 0
   bombNumber: 5
   ultimateNumber: 5
