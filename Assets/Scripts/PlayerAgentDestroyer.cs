@@ -250,12 +250,14 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     private void destroyEnvBomb()
     {
         bombNumber--;
+        AddReward(-0.1f);
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
         foreach (var hitCollider in hitColliders)
         {
             if (hitCollider.tag == "Wall")
             {
                 hitCollider.GetComponent<Obstacle>()?.wallDestruction();
+                AddReward(0.1f);
             }
         }
     }
@@ -275,6 +277,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     public void resetPoint()
     {
         points = 0;
+        catchedCheckpoint = 0;
     }
 
     public void addPoint(int value)
@@ -313,6 +316,20 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     public override void CollectObservations(VectorSensor sensor)
     {
         Debug.Log("observed");
+        List<GameObject> myCheckPoints = map.getCheckPointsState();
+        for (int i = 0; i < myCheckPoints.Count; i++)
+        {
+            if (myCheckPoints[i].activeSelf)
+            {
+                sensor.AddObservation(1);
+            }
+            else
+            {
+                sensor.AddObservation(0);
+            }
+            
+        }
+        
         List<int> states = map.mapStatesAsInt();
         for (int i = 0; i < states.Count; i++)
         {

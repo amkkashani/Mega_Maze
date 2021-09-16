@@ -165,18 +165,10 @@ public class Map : MonoBehaviour
         }
     }
 
-    public bool checkAllCheckpointsCatched(int point)
+    public bool checkAllCheckpointsCatched(int checkPoint)
     {
-        int sum = 0;
-        for (int i = 0; i < checkpointList.Count; i++)
-        {
-            if (checkpointList[i].activeSelf)
-            {
-                sum++;
-            }
-        }
 
-        if ( point == sum )
+        if ( checkPoint == checkpointList.Count )
         {
             return true;
         }
