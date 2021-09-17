@@ -5,6 +5,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class PlayerAgentDestroyer : Agent ,PlayerParent
 {
@@ -22,9 +23,13 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     private List<int> lastAction =new List<int>();
     private bool isHuristic;
     private Map map;
+    [SerializeField]private int lastLevelSteps = 0;
+    private Rigidbody _rigidbody;
+    private List<int> unReachedPlace;
 
     void Awake()
     {
+        _rigidbody = GetComponent<Rigidbody>();
         if (this.GetComponent<BehaviorParameters>().BehaviorType == BehaviorType.HeuristicOnly)
         {
             //if we are in heuristic  mode we do not need request decision
@@ -38,6 +43,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     }
     void Start()
     {
+        cleanReachedPoints();
         ultimateEffect.SetActive(false);
         if (isHuristic)
         {
@@ -46,6 +52,14 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         }
     }
 
+    private void cleanReachedPoints()
+    {
+        unReachedPlace = new List<int>();
+        for (int i = 0; i < map.getCheckPointsState().Count; i++)
+        {
+            unReachedPlace.Add(1);
+        }
+    }
     public void getUltimateAndBombNumber(ref int ultimate , ref int bombNumber)
     {
         ultimate = this.ultimateNumber;
@@ -86,11 +100,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
 
     public void Update()
     {
-        //try to reach at target  point 
-        if (Vector3.Distance(transform.position, finalTarget) > minmumAcceptableDistance)
-        {
-            transform.Translate((finalTarget - transform.position) * reachSpeedFactor);
-        }
+       
 
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -126,6 +136,16 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         }
     }
 
+    public void FixedUpdate()
+    {
+        //try to reach at target  point 
+        if (Vector3.Distance(transform.position, finalTarget) > minmumAcceptableDistance)
+        {
+            // transform.Translate((finalTarget - transform.position) * reachSpeedFactor);
+            _rigidbody.MovePosition((finalTarget - transform.position).normalized * reachSpeedFactor + transform.position);
+        }
+    }
+
     public int[] getPosIndex()
     {
         return posIndex;
@@ -133,6 +153,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     
     public override void OnActionReceived(float[] vectorAction)
     {
+        lastLevelSteps = StepCount;
         switch (vectorAction[0])
         {
             case 0: // end episod
@@ -205,11 +226,8 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         // by default we do nothing
         if (lastAction.Count != 0)
         {
-            Debug.Log(lastAction[0]);
-            Debug.Log("step count :" + StepCount + "x , z :" + this.transform.position.x +" , "+ transform.position.z);
             actionsOut[0] =lastAction[0] ;
             lastAction.RemoveAt(0);
-            Debug.Log(actionsOut[0]);    
             
         }
         else
@@ -263,15 +281,24 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     }
     
     
-
+    private int lastLevelPoint;
     public override void OnEpisodeBegin()
     {
-        if (!map.resetMap(points , StepCount))
-        {
-            //if other map is loaded no need to reset or reset
-            return;
-        }
+        lastLevelPoint = points;
         resetPoint();
+        map = GetComponentInParent<Map>();
+        // if (!map.canReset())
+        // {
+        //     //just for result phase (last phase)
+        //     cleanReachedPoints();
+        //     map.resetMap(lastLevelPoint, lastLevelSteps,unReachedPlace);
+        // }
+        // else
+        // {
+        //     map.resetMap(lastLevelPoint,lastLevelSteps,unReachedPlace);
+        // }
+        cleanReachedPoints();
+        map.resetMap(lastLevelPoint, lastLevelSteps,unReachedPlace);
     }
 
     public void resetPoint()
@@ -299,16 +326,17 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
 
     private void finishLevel()
     {
-        if (map.canReset())
-        {
-            EndEpisode();
-        }
-        else
-        {
-            //just for result phase (last phase)
-            this.gameObject.SetActive(false);
-            map.resetMap(points, StepCount);
-        }
+        EndEpisode();
+        // if (map.canReset())
+        // {
+        //     EndEpisode();
+        // }
+        // else
+        // {
+        //     //just for result phase (last phase)
+        //     this.gameObject.SetActive(false);
+        //     map.resetMap(points, StepCount);
+        // }
 
     }
     
@@ -353,7 +381,6 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         return this.transform;
     }
 
-
     [SerializeField]private int catchedCheckpoint = 0;
     public void rechedTheCheckPoint()
     {
@@ -362,6 +389,14 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         AddReward(5);
         if (map.checkAllCheckpointsCatched(catchedCheckpoint))
         {
+            List<GameObject> checkPoints = map.getCheckPointsState();
+            for (int i = 0; i < checkPoints.Count; i++)
+            {
+                if (!checkPoints[i].activeSelf)
+                {
+                    unReachedPlace[i] = 0;
+                }
+            }
             Debug.Log("completed mission");
             AddReward(50);
             finishLevel();

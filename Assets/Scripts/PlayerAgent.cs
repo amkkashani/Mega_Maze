@@ -21,9 +21,12 @@ public class PlayerAgent : Agent ,PlayerParent
     private List<int> lastAction =new List<int>();
     private bool isHuristic;
     private Map map;
+    private Rigidbody _rigidbody;
+    [SerializeField]private int lastLevelSteps = 0;
 
     void Awake()
     {
+        _rigidbody = GetComponent<Rigidbody>();
         if (this.GetComponent<BehaviorParameters>().BehaviorType == BehaviorType.HeuristicOnly)
         {
             //if we are in heuristic  mode we do not need request decision
@@ -82,14 +85,17 @@ public class PlayerAgent : Agent ,PlayerParent
             this.transform.position = (Vector3) target;
         }
     }
-
-    public void Update()
+    public void FixedUpdate()
     {
         //try to reach at target  point 
         if (Vector3.Distance(transform.position, finalTarget) > minmumAcceptableDistance)
         {
-            transform.Translate((finalTarget - transform.position) * reachSpeedFactor);
+            // transform.Translate((finalTarget - transform.position) * reachSpeedFactor);
+            _rigidbody.MovePosition((finalTarget - transform.position) * reachSpeedFactor+ transform.position);
         }
+    }
+    public void Update()
+    {
 
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -132,6 +138,7 @@ public class PlayerAgent : Agent ,PlayerParent
     
     public override void OnActionReceived(float[] vectorAction)
     {
+        lastLevelSteps = StepCount;
         switch (vectorAction[0])
         {
             case 0: // end episod
@@ -204,11 +211,11 @@ public class PlayerAgent : Agent ,PlayerParent
         // by default we do nothing
         if (lastAction.Count != 0)
         {
-            Debug.Log(lastAction[0]);
-            Debug.Log("step count :" + StepCount + "x , z :" + this.transform.position.x +" , "+ transform.position.z);
+            // Debug.Log(lastAction[0]);
+            // Debug.Log("step count :" + StepCount + "x , z :" + this.transform.position.x +" , "+ transform.position.z);
             actionsOut[0] =lastAction[0] ;
             lastAction.RemoveAt(0);
-            Debug.Log(actionsOut[0]);    
+            // Debug.Log(actionsOut[0]);    
             
         }
         else
@@ -292,17 +299,26 @@ public class PlayerAgent : Agent ,PlayerParent
             }
         }
     }
-    
-    
 
+
+
+    private int lastLevelPoint;
     public override void OnEpisodeBegin()
     {
-        if (!map.resetMap(points , StepCount))
-        {
-            //if other map is loaded no need to reset or reset
-            return;
-        }
+        lastLevelPoint = points;
         resetPoint();
+        map = GetComponentInParent<Map>();
+        if (!map.canReset())
+        {
+            //just for result phase (last phase)
+            map.resetMap(lastLevelPoint, lastLevelSteps);
+            
+        }
+        else
+        {
+            map.resetMap();
+        }
+        
     }
 
     public void resetPoint()
@@ -329,23 +345,26 @@ public class PlayerAgent : Agent ,PlayerParent
 
     private void finishLevel()
     {
-        if (map.canReset())
-        {
-            EndEpisode();
-        }
-        else
-        {
-            //just for result phase (last phase)
-            this.gameObject.SetActive(false);
-            map.resetMap(points, StepCount);
-        }
+        EndEpisode();
+        // if (map.canReset())
+        // {
+        //     //used in train phase - every iteration we make entire level from initial state
+        //     EndEpisode();
+        // }
+        // else
+        // {
+        //     //just for result phase (last phase)
+        //     this.gameObject.SetActive(false);
+        //     map.resetMap(points, StepCount);
+        //     this.gameObject.SetActive(true);
+        // }
 
     }
     
     
     public override void CollectObservations(VectorSensor sensor)
     {
-        Debug.Log("observed");
+        // Debug.Log("observed");
         List<int> states = map.mapStatesAsInt();
         for (int i = 0; i < states.Count; i++)
         {

@@ -94,7 +94,7 @@ public class GameManager : Singleton<GameManager>
                 _maps.Add(tempMap.GetComponent<Map>());
                 Debug.Log("i find the map");
             }
-        /*}else if (_managerState == ManagerState.testFromFile)
+        }else if (_managerState == ManagerState.testFromFile)
         {
             //test manager Setup
             //manually u must setup map and agent for this
@@ -102,7 +102,7 @@ public class GameManager : Singleton<GameManager>
             {
                 //make first map
                 makeMapByStruct(ListOfMapsStruct._structsMap[0],Vector3.zero);
-            }*/
+            }
             
         }else if (_managerState == ManagerState.heuristicTraining)
         {
@@ -258,6 +258,21 @@ public class GameManager : Singleton<GameManager>
         added += testResultSolver.avgOfpoints;
         added += ",";
         added += testResultSolver.maxOfGoalReach;
+        
+        List<int> checkpoints = testResultSolver.checkPointIsActive;
+        if (checkpoints!=null)
+        {
+            added += ",";
+            for (int i = 0; i < checkpoints.Count; i++)
+            {
+                if (checkpoints[i] == 1)
+                {
+                    added += i + "-";
+                }
+
+            }
+        }
+        
         added += "\n";
         
         
@@ -315,4 +330,5 @@ public struct TestResultSolver
     public float stepNumber;
     public float avgOfpoints;
     public int maxOfGoalReach; // maximum number of that available
+    public List<int> checkPointIsActive;
 }
