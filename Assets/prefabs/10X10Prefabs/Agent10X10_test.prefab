@@ -24101,7 +24101,7 @@ GameObject:
   - component: {fileID: 2280220797365893471}
   - component: {fileID: 5014482735256242289}
   m_Layer: 0
-  m_Name: Agent10X10_solver
+  m_Name: Agent10X10_test
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24248,7 +24248,7 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 800
   minmumAcceptableDistance: 0.1
-  reachSpeedFactor: 0.4
+  reachSpeedFactor: 1
   explosionRadius: 3
   points: 0
   bombNumber: 5
@@ -24267,5 +24267,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 10
+  DecisionPeriod: 20
   TakeActionsBetweenDecisions: 0

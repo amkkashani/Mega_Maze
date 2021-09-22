@@ -163,9 +163,9 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 3600
+  MaxStep: 7000
   minmumAcceptableDistance: 0.1
-  reachSpeedFactor: 0.9
+  reachSpeedFactor: 1
   explosionRadius: 3
   points: 0
   bombNumber: 5

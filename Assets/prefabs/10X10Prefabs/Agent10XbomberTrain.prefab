@@ -24101,7 +24101,7 @@ GameObject:
   - component: {fileID: 7424446545969083581}
   - component: {fileID: 3457699101377284269}
   m_Layer: 0
-  m_Name: Agent10X10_boomber
+  m_Name: Agent10XbomberTrain
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

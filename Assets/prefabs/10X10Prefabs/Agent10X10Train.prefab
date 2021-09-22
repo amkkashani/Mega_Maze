@@ -24246,7 +24246,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 2500
+  MaxStep: 8000
   minmumAcceptableDistance: 0.1
   reachSpeedFactor: 0.9
   explosionRadius: 3

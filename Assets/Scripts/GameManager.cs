@@ -116,6 +116,9 @@ public class GameManager : Singleton<GameManager>
         
     }
 
+    
+    
+    
     public void removeSavedId(int id)
     {
         for (int i = 0; i < ListOfMapsStruct._structsMap.Count; i++)

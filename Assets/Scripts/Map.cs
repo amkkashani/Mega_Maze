@@ -23,12 +23,12 @@ public class Map : MonoBehaviour
     [SerializeField] private float chanceOfOnWayWall; //2
     [SerializeField] private GameObject oneWayWall;
     [SerializeField] private int numberOfGoals;
+    [SerializeField] private int maxUltimate=3;
+    [SerializeField] private int maxBoomb=5;
     [SerializeField] private GameObject _goal; //3
     [SerializeField] private GameObject checkpointObj; //this object use for notify the object reached to specific point
-
-    
     [SerializeField] private GameObject parentObj;
-
+    
     
 
 
@@ -58,7 +58,7 @@ public class Map : MonoBehaviour
     }
 
     //this function destroy  walls and goals and palyers
-    public void destroyElements()
+    private void destroyElements()
     {
         Transform[] childs = parentObj.GetComponentsInChildren<Transform>();
         for (int i = 1; i < childs.Length; i++)
@@ -66,6 +66,18 @@ public class Map : MonoBehaviour
             Destroy(childs[i].gameObject);
         }
     }
+
+    
+    //this function dont destroy the user
+    private void destroyAllObstacles()
+    {
+        Obstacle[] childs = parentObj.GetComponentsInChildren<Obstacle>();
+        for (int i = 1; i < childs.Length; i++)
+        {
+            Destroy(childs[i].gameObject);
+        }
+    }
+    
 
     public void Start()
     {
@@ -197,14 +209,26 @@ public class Map : MonoBehaviour
     }
     
 
-    private void makeRandomMap()
+    private void makeRandomMap(bool savePlayer = false)
     {
         // random map
+        if (savePlayer)
+        {
+            //just walls and goals
+            destroyAllObstacles();
+        }
+        else
+        {
+            //destroy walls goals and player
+            destroyElements();
+        }
+
         float sum = chanceOfEmptyWall + chanceOfNormallWall + chanceOfOnWayWall;
         float probEmptyWall = chanceOfEmptyWall / sum;
         float probNormallWall = chanceOfNormallWall / sum;
         float probOneWayWall = chanceOfOnWayWall / sum;
 
+        emptyList = new List<int[]>();
         for (int i = 0; i < XSize; i++)
         {
             for (int j = 0; j < zSize; j++)
@@ -232,8 +256,7 @@ public class Map : MonoBehaviour
                 newObj.GetComponent<Obstacle>().setterXZ(i, j, this);
             }
         }
-
-        choosePlayerStartPointAndGoals(numberOfGoals);
+        choosePlayerStartPointAndGoals(numberOfGoals , savePlayer);
     }
 
     //just for test 
@@ -389,15 +412,13 @@ public class Map : MonoBehaviour
     //true show normal reset for class
     public bool resetMap(int points = -1 , int steps = -1, List<int> checkPoints = null)
     {
-        
         if (isRandomMap)
         {
-            destroyElements();
-            makeRandomMap();
+            Debug.Log("i destroy all things");
+            makeRandomMap(true);
             StartCoroutine(refreshCheckpoints()) ; // reset all checkpoints;
             return false;
         }
-        
         
         int[] lastPos = myPlayerTransform.GetComponent<PlayerParent>().getPosIndex();
         if (GameManager.Instance.getManagerState() == ManagerState.heuristicTraining)
@@ -427,14 +448,8 @@ public class Map : MonoBehaviour
         }
 
         repeatNumber++;
-
-        if (isRandomMap)
-        {
-            Debug.Log("i destroy all things");
-            destroyElements();
-            makeRandomMap();
-            return true;
-        }
+        
+        
 
         Collider collider = myPlayerTransform.GetComponent<CapsuleCollider>();
         collider.enabled = false;
@@ -540,21 +555,37 @@ public class Map : MonoBehaviour
     }
 
 
-    private void choosePlayerStartPointAndGoals(int goalNumbers)
+    private void choosePlayerStartPointAndGoals(int goalNumbers , bool savePlayer)
     {
         List<int[]> tempEmptyList = new List<int[]>(emptyList);
         int rnd = Random.Range(0, tempEmptyList.Count);
         int[] start = tempEmptyList[rnd];
         tempEmptyList.RemoveAt(rnd);
-        GameObject _playerObj = instanceInMap(GameManager.Instance.getPlayerGameObject(), start[0], start[1]);
-        myPlayerTransform = _playerObj.transform;
         playerStartPos = start;
         Debug.Log("started at" + playerStartPos[0] + " -- " + playerStartPos[1]);
+        if (savePlayer)
+        {
+            Debug.Log( "id of player" +myPlayerTransform.gameObject.GetInstanceID());
+            PlayerParent tempPlayerParent = this.GetComponentInChildren<PlayerParent>();
+            // _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
+            tempPlayerParent
+                .setPos((Vector3) calculatePosInMap(start[0], start[1], myPlayerTransform.transform) + Vector3.up, start, true,
+                    this);
+            tempPlayerParent.setUltimateAndBombNumber(Random.Range(0,maxUltimate),Random.Range(0,maxBoomb) );
+        }
+        else
+        {
+            GameObject _playerObj = instanceInMap(GameManager.Instance.getPlayerGameObject(), start[0], start[1]);
+            myPlayerTransform = _playerObj.transform;
+            // _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
+            _playerObj.GetComponent<PlayerParent>()
+                .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
+                    this);
+        }
+        
+        
 
-        // _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
-        _playerObj.GetComponent<PlayerParent>()
-            .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
-                this);
+        
 
         for (int i = 0; i < goalNumbers && tempEmptyList.Count > 1; i++)
         {

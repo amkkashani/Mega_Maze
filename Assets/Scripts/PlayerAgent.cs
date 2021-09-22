@@ -90,10 +90,11 @@ public class PlayerAgent : Agent ,PlayerParent
         //try to reach at target  point 
         if (Vector3.Distance(transform.position, finalTarget) > minmumAcceptableDistance)
         {
-            // transform.Translate((finalTarget - transform.position) * reachSpeedFactor);
             _rigidbody.MovePosition((finalTarget - transform.position) * reachSpeedFactor+ transform.position);
         }
     }
+    
+    
     public void Update()
     {
 
@@ -142,8 +143,8 @@ public class PlayerAgent : Agent ,PlayerParent
         switch (vectorAction[0])
         {
             case 0: // end episod
-                AddReward(-10);
-                // finishLevel();
+                AddReward(-50);
+                finishLevel();
                 break;
             case 5:  //area bomb
                 destroyEnvBomb();
@@ -254,7 +255,7 @@ public class PlayerAgent : Agent ,PlayerParent
 
     private void activeUltimate()
     {
-        AddReward(-5);
+        AddReward(-3);
         if (ultimateIsActive || ultimateNumber == 0)
         {
             AddReward(-1);//this minus reward teach agent dont waste action with repeating useless actions
@@ -284,7 +285,7 @@ public class PlayerAgent : Agent ,PlayerParent
 
     private void destroyEnvBomb()
     {
-        AddReward(-5);
+        AddReward(-3);
         if (bombNumber == 0)
         {
             return; 
@@ -308,16 +309,17 @@ public class PlayerAgent : Agent ,PlayerParent
         lastLevelPoint = points;
         resetPoint();
         map = GetComponentInParent<Map>();
-        if (!map.canReset())
-        {
-            //just for result phase (last phase)
-            map.resetMap(lastLevelPoint, lastLevelSteps);
-            
-        }
-        else
-        {
-            map.resetMap();
-        }
+        // if (!map.canReset())
+        // {
+        //     //just for result phase (last phase)
+        //     map.resetMap(lastLevelPoint, lastLevelSteps);
+        //     
+        // }
+        // else
+        // {
+        //     map.resetMap();
+        // }
+        map.resetMap(lastLevelPoint, lastLevelSteps);
         
     }
 
@@ -369,7 +371,6 @@ public class PlayerAgent : Agent ,PlayerParent
         for (int i = 0; i < states.Count; i++)
         {
             sensor.AddObservation(states[i]);
-          
         }
         sensor.AddObservation(posIndex[0]);
         sensor.AddObservation(posIndex[1]);

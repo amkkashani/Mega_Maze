@@ -336,8 +336,8 @@ MonoBehaviour:
   playerGameObject: {fileID: 7024649507283518341, guid: 7172a47ae9b0afa42abc41d7008fd556, type: 3}
   ListOfMapsStruct:
     _structsMap: []
-  randomPosReset: 1
-  randomPosTarget: 1
+  randomPosReset: 0
+  randomPosTarget: 0
   numberOfrepeat: 5
   mapDistance: 60
   removeId: 0
