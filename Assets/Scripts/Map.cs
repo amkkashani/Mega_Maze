@@ -45,7 +45,7 @@ public class Map : MonoBehaviour
 
     [SerializeField] private Obstacle[,] map;
     [SerializeField] private bool loadedMap = false;
-    [SerializeField] private int repeatNumber = 0;
+    [SerializeField] private int repeatNumber = -1;
     public void Awake()
     {
         originPivot = transform.position;
@@ -301,6 +301,9 @@ public class Map : MonoBehaviour
         _testResultSolver.id = structData.id;
         _testResultSolver.numberOfrepeat = GameManager.Instance.getNumberOfRepeat();
         _testResultSolver.avgOfpoints = 0;
+        _testResultSolver.avgStepNumber = 0;
+        _testResultSolver.maxOfGoalReach = 0;
+        // _testResultSolver.checkPointIsActive = clearCheckPointIsActive();
         
 
 
@@ -350,6 +353,9 @@ public class Map : MonoBehaviour
         _testResultSolver.id = structData.id;
         _testResultSolver.numberOfrepeat = GameManager.Instance.getNumberOfRepeat();
         _testResultSolver.avgOfpoints = 0;
+        _testResultSolver.avgStepNumber = 0;
+        _testResultSolver.maxOfGoalReach = 0;
+        _testResultSolver.checkPointIsActive = clearCheckPointIsActive();
         
 
 
@@ -437,12 +443,15 @@ public class Map : MonoBehaviour
         
         if (GameManager.Instance.getManagerState() == ManagerState.testFromFile)
         {
+            // CheckArray(checkPoints);
             updateSolverStruct(points , steps,checkPoints);
             if (repeatNumber + 1 >= GameManager.Instance.getNumberOfRepeat())
             {
                 GameManager.Instance.writetoFileSolverStruct(_testResultSolver);
                 MapDataStruct temp = GameManager.Instance.getNextMapStruct(this.id);
                 remakeMapByStruct(temp,myPlayerTransform);
+                StartCoroutine(refreshCheckpoints()) ; // reset all checkpoints
+                // _testResultSolver.checkPointIsActive = clearCheckPointIsActive();
                 return false;
             }
         }
@@ -501,6 +510,16 @@ public class Map : MonoBehaviour
         return true;
     }
 
+    public static void CheckArray(List<int> ls)
+    {
+        String s = "";
+        foreach (var VARIABLE in ls)
+        {
+            s += VARIABLE;
+        }
+        Debug.Log(s);
+    }
+    
     private IEnumerator makeRandomGoals(Collider collider,int[] lastPlayerPos)
     {
         yield return null;
@@ -599,7 +618,7 @@ public class Map : MonoBehaviour
         }
     }
 
-    public GameObject instanceInMap(GameObject obj, int i, int j, float Y_offset = 0f)
+    private GameObject instanceInMap(GameObject obj, int i, int j, float Y_offset = 0f)
     {
         GameObject result = Instantiate(obj,
             originPivot + new Vector3(i * blockSizeOfMap - XSize * blockSizeOfMap / 2 + blockSizeOfMap / 2,
@@ -791,15 +810,17 @@ public class Map : MonoBehaviour
         }
 
         _testResultSolver.avgOfpoints += avgPlus;
-        _testResultSolver.stepNumber += avgStepPlus;
+        _testResultSolver.avgStepNumber += avgStepPlus;
         if (checkPoints != null)
         {
             if (_testResultSolver.checkPointIsActive == null)
             {
+                Debug.Log("yes side");
                 _testResultSolver.checkPointIsActive = checkPoints;
             }
             else
             {
+                Debug.Log("noSide");
                 for (int i = 0; i < _testResultSolver.checkPointIsActive.Count; i++)
                 {
                     if (checkPoints[i] == 0 && _testResultSolver.checkPointIsActive[i] ==1)
@@ -809,6 +830,17 @@ public class Map : MonoBehaviour
                 }
             }
         }
+    }
+
+    private List<int> clearCheckPointIsActive()
+    {
+        List<int> cleanCheckpoints = new List<int>();
+        for (int i = 0; i < checkpointList.Count; i++)
+        {
+            cleanCheckpoints.Add(1);
+        }
+
+        return cleanCheckpoints;
     }
 
     

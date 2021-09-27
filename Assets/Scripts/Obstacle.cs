@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Obstacle : MonoBehaviour
+public abstract class Obstacle : MonoBehaviour
 {
     [SerializeField]protected GameObject afterDestroyed;
     protected int x;
@@ -22,13 +22,7 @@ public class Obstacle : MonoBehaviour
         this.map = map;
     }
 
-    protected void changeToNormallWall()
-    {
-        map.changeMap(x,z,1  );
-    }
 
-    
-    
     public void wallDestruction()
     {
         map.changeMap(x,z,0);

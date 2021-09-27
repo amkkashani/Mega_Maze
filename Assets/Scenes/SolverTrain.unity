@@ -328,10 +328,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be63afbd32d07344297c2dc742fef021, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapObj: {fileID: 2558436945468733009, guid: 2b6e80d3560898649a71d12e209ecf5d, type: 3}
+  mapObj: {fileID: 2558436945468733009, guid: 43615d1c765d6404799c4309b3f84caf, type: 3}
   _maps: []
   _managerState: 1
-  saveFileName: 10X10StepByStep_L4
+  saveFileName: map25_50
   saveResultFileName: 
   playerGameObject: {fileID: 7024649507283518341, guid: 7172a47ae9b0afa42abc41d7008fd556, type: 3}
   ListOfMapsStruct:

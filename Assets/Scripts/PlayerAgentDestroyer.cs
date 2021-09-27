@@ -59,6 +59,8 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         {
             unReachedPlace.Add(1);
         }
+
+        catchedCheckpoint = 0;
     }
     public void getUltimateAndBombNumber(ref int ultimate , ref int bombNumber)
     {
@@ -214,7 +216,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
                 break;
         }
 
-        AddReward(-0.3f);
+        AddReward(-0.1f);
     }
 
     public override void Heuristic(float[] actionsOut)
@@ -268,14 +270,12 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     private void destroyEnvBomb()
     {
         bombNumber--;
-        AddReward(-0.1f);
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
         foreach (var hitCollider in hitColliders)
         {
             if (hitCollider.tag == "Wall")
             {
                 hitCollider.GetComponent<Obstacle>()?.wallDestruction();
-                AddReward(0.1f);
             }
         }
     }
@@ -284,7 +284,8 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     private int lastLevelPoint;
     public override void OnEpisodeBegin()
     {
-        lastLevelPoint = points;
+        lastLevelPoint = catchedCheckpoint;
+        checkUnReachecPlaces();
         resetPoint();
         map = GetComponentInParent<Map>();
         // if (!map.canReset())
@@ -297,8 +298,8 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
         // {
         //     map.resetMap(lastLevelPoint,lastLevelSteps,unReachedPlace);
         // }
-        cleanReachedPoints();
         map.resetMap(lastLevelPoint, lastLevelSteps,unReachedPlace);
+        cleanReachedPoints();
     }
 
     public void resetPoint()
@@ -343,7 +344,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     
     public override void CollectObservations(VectorSensor sensor)
     {
-        Debug.Log("observed");
+        // Debug.Log("observed");
         List<GameObject> myCheckPoints = map.getCheckPointsState();
         for (int i = 0; i < myCheckPoints.Count; i++)
         {
@@ -384,22 +385,26 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     [SerializeField]private int catchedCheckpoint = 0;
     public void rechedTheCheckPoint()
     {
-        Debug.Log("reached");
+        // Debug.Log("reached");
         catchedCheckpoint++;
         AddReward(5);
         if (map.checkAllCheckpointsCatched(catchedCheckpoint))
         {
-            List<GameObject> checkPoints = map.getCheckPointsState();
-            for (int i = 0; i < checkPoints.Count; i++)
-            {
-                if (!checkPoints[i].activeSelf)
-                {
-                    unReachedPlace[i] = 0;
-                }
-            }
             Debug.Log("completed mission");
             AddReward(50);
             finishLevel();
+        }
+    }
+
+    private void checkUnReachecPlaces()
+    {
+        List<GameObject> checkPoints = map.getCheckPointsState();
+        for (int i = 0; i < checkPoints.Count; i++)
+        {
+            if (!checkPoints[i].activeSelf || lastLevelPoint == checkPoints.Count )
+            {
+                unReachedPlace[i] = 0;
+            }
         }
     }
 }

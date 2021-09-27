@@ -13,5 +13,9 @@ public class OneWay : Obstacle
         }
     }
 
+    private void changeToNormallWall()
+    {
+        map.changeMap(x,z,1  );
+    }
 
 }

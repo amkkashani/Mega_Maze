@@ -139,12 +139,13 @@ public class PlayerAgent : Agent ,PlayerParent
     
     public override void OnActionReceived(float[] vectorAction)
     {
+        AddReward(-0.3f);
         lastLevelSteps = StepCount;
         switch (vectorAction[0])
         {
             case 0: // end episod
                 AddReward(-50);
-                finishLevel();
+                // finishLevel();
                 break;
             case 5:  //area bomb
                 destroyEnvBomb();
@@ -200,7 +201,7 @@ public class PlayerAgent : Agent ,PlayerParent
                 break;
         }
 
-        AddReward(-0.3f);
+        
     }
 
     public override void Heuristic(float[] actionsOut)
@@ -309,16 +310,6 @@ public class PlayerAgent : Agent ,PlayerParent
         lastLevelPoint = points;
         resetPoint();
         map = GetComponentInParent<Map>();
-        // if (!map.canReset())
-        // {
-        //     //just for result phase (last phase)
-        //     map.resetMap(lastLevelPoint, lastLevelSteps);
-        //     
-        // }
-        // else
-        // {
-        //     map.resetMap();
-        // }
         map.resetMap(lastLevelPoint, lastLevelSteps);
         
     }
@@ -334,10 +325,7 @@ public class PlayerAgent : Agent ,PlayerParent
         AddReward(value*100);
         if (map.getNumberOfGoals() == points)
         {
-            //end episode 
             Debug.Log("end episod");
-            // Debug.Log(posIndex[0] +" -- " + posIndex[1]);
-            // map.resetMap();
             finishLevel();
             
         }

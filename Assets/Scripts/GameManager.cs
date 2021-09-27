@@ -252,11 +252,12 @@ public class GameManager : Singleton<GameManager>
     public void writetoFileSolverStruct(TestResultSolver testResultSolver)
     {
         string added = "";
+        added += "\n";
         added += testResultSolver.id;
         added += ",";
         added += testResultSolver.numberOfrepeat;
         added += ",";
-        added += testResultSolver.stepNumber;
+        added += testResultSolver.avgStepNumber;
         added += ",";
         added += testResultSolver.avgOfpoints;
         added += ",";
@@ -276,7 +277,7 @@ public class GameManager : Singleton<GameManager>
             }
         }
         
-        added += "\n";
+        
         
         
         string current;
@@ -330,7 +331,7 @@ public struct TestResultSolver
 {
     public int id;
     public int numberOfrepeat;
-    public float stepNumber;
+    public float avgStepNumber;
     public float avgOfpoints;
     public int maxOfGoalReach; // maximum number of that available
     public List<int> checkPointIsActive;

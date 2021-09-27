@@ -24223,7 +24223,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 4eb0eb5841cda9048a3a5584062f1c31, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 22f033a7b4c7b1e4396e8d67ab9aeb04, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 2
   m_BehaviorName: MazeSolver_10X10
@@ -24246,7 +24246,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 800
+  MaxStep: 1500
   minmumAcceptableDistance: 0.1
   reachSpeedFactor: 1
   explosionRadius: 3
