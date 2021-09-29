@@ -1,0 +1,48 @@
+default_settings:
+  trainer_type: ppo
+  hyperparameters:
+    batch_size: 16
+    buffer_size: 120
+    learning_rate: 0.0002
+    beta: 0.01
+    epsilon: 0.05
+    lambd: 0.9
+    num_epoch: 10
+    learning_rate_schedule: linear
+  network_settings:
+    normalize: true
+    hidden_units: 256
+    num_layers: 4
+    vis_encode_type: match3
+  reward_signals:
+    extrinsic:
+      gamma: 1
+      strength: 1.0
+  keep_checkpoints: 5
+  max_steps: 5000000
+  time_horizon: 256
+  summary_freq: 20000
+
+behaviors:
+  Boomber_10X10:
+    # Settings can be very simple since we don't care about actually training the model
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 1024
+      buffer_size: 16384
+    network_settings:
+      hidden_units: 256
+      num_layers: 3
+    max_steps: 15000000
+    summary_freq: 10000
+  MazeSolver_10X10:
+    # Settings can be very simple since we don't care about actually training the model
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 1024
+      buffer_size: 32768
+    network_settings:
+      hidden_units: 256
+      num_layers: 3
+    max_steps: 15000000
+    summary_freq: 10000
