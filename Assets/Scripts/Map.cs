@@ -40,7 +40,7 @@ public class Map : MonoBehaviour
     private Vector3 originPivot;
     private MapDataStruct intialDataStruct;
     private Transform myPlayerTransform;
-    
+    private bool isFirstTime = true;
     private TestResultSolver _testResultSolver = new TestResultSolver();
 
     [SerializeField] private Obstacle[,] map;
@@ -310,7 +310,16 @@ public class Map : MonoBehaviour
         //
 
         numberOfGoals = 0;
-        repeatNumber = 0;
+        if (isFirstTime)
+        {
+            repeatNumber = -1;
+            isFirstTime = false;
+        }
+        else
+        {
+            repeatNumber = 0;    
+        }
+        
         intialDataStruct = structData;
         GameManager.checkMaxId(structData.id);
         this.id = structData.id;
@@ -362,7 +371,15 @@ public class Map : MonoBehaviour
         //
 
         numberOfGoals = 0;
-        repeatNumber = 0;
+        if (isFirstTime)
+        {
+            repeatNumber = -1;
+            isFirstTime = false;
+        }
+        else
+        {
+            repeatNumber = 0;    
+        }
         intialDataStruct = structData;
         this.id = structData.id;
         XSize = structData.XSize;

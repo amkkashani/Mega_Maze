@@ -1971,11 +1971,14 @@ MonoBehaviour:
   chanceOfOnWayWall: 1
   oneWayWall: {fileID: 1895173277673449560, guid: 15baecdd774569842aa09b1cede45afa, type: 3}
   numberOfGoals: 3
+  maxUltimate: 3
+  maxBoomb: 5
   _goal: {fileID: 6119692456812564762, guid: 7c0cb22a6e65b3e40b33f272b1e07b62, type: 3}
   checkpointObj: {fileID: 0}
   parentObj: {fileID: 6323664562770110591}
   isRandomMap: 0
   loadedMap: 0
+  repeatNumber: 0
 --- !u!1 &6323664562770110591
 GameObject:
   m_ObjectHideFlags: 0
@@ -10301,7 +10304,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8913221252007491281, guid: b87aa64706d551e478d19e3f950acd91, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8913221252007491281, guid: b87aa64706d551e478d19e3f950acd91, type: 3}
       propertyPath: m_LocalScale.y
@@ -10309,7 +10312,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8913221252007491281, guid: b87aa64706d551e478d19e3f950acd91, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8913221252007491281, guid: b87aa64706d551e478d19e3f950acd91, type: 3}
       propertyPath: m_LocalPosition.x

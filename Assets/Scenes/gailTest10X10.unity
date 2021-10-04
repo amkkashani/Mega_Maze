@@ -332,7 +332,7 @@ MonoBehaviour:
   _maps:
   - {fileID: 0}
   _managerState: 3
-  saveFileName: 10X10_train2
+  saveFileName: ForPlay
   saveResultFileName: res_solver.csv
   playerGameObject: {fileID: 6030020883575814, guid: 1b95631e1451d3841b7f7e6d0f7b49dc, type: 3}
   ListOfMapsStruct:
