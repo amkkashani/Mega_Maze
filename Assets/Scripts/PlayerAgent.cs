@@ -21,9 +21,12 @@ public class PlayerAgent : Agent ,PlayerParent
     private List<int> lastAction =new List<int>();
     private bool isHuristic;
     private Map map;
+    private Rigidbody _rigidbody;
+    [SerializeField]private int lastLevelSteps = 0;
 
     void Awake()
     {
+        _rigidbody = GetComponent<Rigidbody>();
         if (this.GetComponent<BehaviorParameters>().BehaviorType == BehaviorType.HeuristicOnly)
         {
             //if we are in heuristic  mode we do not need request decision
@@ -82,14 +85,18 @@ public class PlayerAgent : Agent ,PlayerParent
             this.transform.position = (Vector3) target;
         }
     }
-
-    public void Update()
+    public void FixedUpdate()
     {
         //try to reach at target  point 
         if (Vector3.Distance(transform.position, finalTarget) > minmumAcceptableDistance)
         {
-            transform.Translate((finalTarget - transform.position) * reachSpeedFactor);
+            _rigidbody.MovePosition((finalTarget - transform.position) * reachSpeedFactor+ transform.position);
         }
+    }
+    
+    
+    public void Update()
+    {
 
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -132,11 +139,13 @@ public class PlayerAgent : Agent ,PlayerParent
     
     public override void OnActionReceived(float[] vectorAction)
     {
+        AddReward(-0.3f);
+        lastLevelSteps = StepCount;
         switch (vectorAction[0])
         {
             case 0: // end episod
-                AddReward(-6);
-                finishLevel();
+                AddReward(-50);
+                // finishLevel();
                 break;
             case 5:  //area bomb
                 destroyEnvBomb();
@@ -192,7 +201,7 @@ public class PlayerAgent : Agent ,PlayerParent
                 break;
         }
 
-        AddReward(-50.0f/MaxStep);
+        
     }
 
     public override void Heuristic(float[] actionsOut)
@@ -202,13 +211,13 @@ public class PlayerAgent : Agent ,PlayerParent
         // index [1]=> 0:not to do , 1: activate the ultimate
         // index [2]=> 0:not to do , 1: activate the bomb
         // by default we do nothing
-        if (lastAction.Count != null)
+        if (lastAction.Count != 0)
         {
-            Debug.Log(lastAction[0]);
-            Debug.Log("step count :" + StepCount + "x , z :" + this.transform.position.x +" , "+ transform.position.z);
+            // Debug.Log(lastAction[0]);
+            // Debug.Log("step count :" + StepCount + "x , z :" + this.transform.position.x +" , "+ transform.position.z);
             actionsOut[0] =lastAction[0] ;
             lastAction.RemoveAt(0);
-            Debug.Log(actionsOut[0]);    
+            // Debug.Log(actionsOut[0]);    
             
         }
         else
@@ -247,7 +256,7 @@ public class PlayerAgent : Agent ,PlayerParent
 
     private void activeUltimate()
     {
-        AddReward(-1);
+        AddReward(-3);
         if (ultimateIsActive || ultimateNumber == 0)
         {
             AddReward(-1);//this minus reward teach agent dont waste action with repeating useless actions
@@ -277,7 +286,7 @@ public class PlayerAgent : Agent ,PlayerParent
 
     private void destroyEnvBomb()
     {
-        AddReward(-1);
+        AddReward(-3);
         if (bombNumber == 0)
         {
             return; 
@@ -292,17 +301,17 @@ public class PlayerAgent : Agent ,PlayerParent
             }
         }
     }
-    
-    
 
+
+
+    private int lastLevelPoint;
     public override void OnEpisodeBegin()
     {
-        if (!map.resetMap(points , StepCount))
-        {
-            //if other map is loaded no need to reset or reset
-            return;
-        }
+        lastLevelPoint = points;
         resetPoint();
+        map = GetComponentInParent<Map>();
+        map.resetMap(lastLevelPoint, lastLevelSteps);
+        
     }
 
     public void resetPoint()
@@ -316,10 +325,7 @@ public class PlayerAgent : Agent ,PlayerParent
         AddReward(value*100);
         if (map.getNumberOfGoals() == points)
         {
-            //end episode 
             Debug.Log("end episod");
-            // Debug.Log(posIndex[0] +" -- " + posIndex[1]);
-            // map.resetMap();
             finishLevel();
             
         }
@@ -329,22 +335,26 @@ public class PlayerAgent : Agent ,PlayerParent
 
     private void finishLevel()
     {
-        if (map.canReset())
-        {
-            EndEpisode();
-        }
-        else
-        {
-            //just for result phase (last phase)
-            this.gameObject.SetActive(false);
-            map.resetMap(points, StepCount);
-        }
+        EndEpisode();
+        // if (map.canReset())
+        // {
+        //     //used in train phase - every iteration we make entire level from initial state
+        //     EndEpisode();
+        // }
+        // else
+        // {
+        //     //just for result phase (last phase)
+        //     this.gameObject.SetActive(false);
+        //     map.resetMap(points, StepCount);
+        //     this.gameObject.SetActive(true);
+        // }
 
     }
     
     
     public override void CollectObservations(VectorSensor sensor)
     {
+        // Debug.Log("observed");
         List<int> states = map.mapStatesAsInt();
         for (int i = 0; i < states.Count; i++)
         {

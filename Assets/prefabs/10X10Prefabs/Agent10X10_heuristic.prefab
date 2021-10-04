@@ -113,11 +113,11 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 116
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!114 &2940803153255591978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,14 +163,15 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 3600
+  MaxStep: 7000
   minmumAcceptableDistance: 0.1
-  reachSpeedFactor: 0.9
+  reachSpeedFactor: 1
   explosionRadius: 3
   points: 0
   bombNumber: 5
   ultimateNumber: 5
   ultimateEffect: {fileID: 7853761459947815822}
+  lastLevelSteps: 0
 --- !u!114 &1837589220716540669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,7 +200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Record: 1
   NumStepsToRecord: 0
-  DemonstrationName: try4
+  DemonstrationName: solver10X10_heuristic
   DemonstrationDirectory: Demos
 --- !u!1 &7853211680506473648
 GameObject:

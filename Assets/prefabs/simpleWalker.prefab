@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2241032888219472870}
   - component: {fileID: 3635460812443635516}
   - component: {fileID: 7976367883965321031}
+  - component: {fileID: -5972370510680989742}
   m_Layer: 0
   m_Name: simpleWalker
   m_TagString: Player
@@ -114,6 +115,25 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 1
+--- !u!114 &-5972370510680989742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7557298670512853347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1196fd224d7f2c4f9298c38c48335f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minmumAcceptableDistance: 0.1
+  reachSpeedFactor: 0.05
+  explosionRadius: 3
+  points: 0
+  bombNumber: 5
+  ultimateNumber: 5
+  ultimateEffect: {fileID: 291517038862821099}
 --- !u!1001 &291792983122629659
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -203,6 +223,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eca000ab44c908d4dab395f654753038, type: 3}
+--- !u!1 &291517038862821099 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1975959190090480, guid: eca000ab44c908d4dab395f654753038, type: 3}
+  m_PrefabInstance: {fileID: 291792983122629659}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &289302153955776921 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4335282639064450, guid: eca000ab44c908d4dab395f654753038, type: 3}

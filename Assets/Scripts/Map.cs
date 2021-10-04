@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
@@ -22,10 +23,13 @@ public class Map : MonoBehaviour
     [SerializeField] private float chanceOfOnWayWall; //2
     [SerializeField] private GameObject oneWayWall;
     [SerializeField] private int numberOfGoals;
+    [SerializeField] private int maxUltimate=3;
+    [SerializeField] private int maxBoomb=5;
     [SerializeField] private GameObject _goal; //3
-
+    [SerializeField] private GameObject checkpointObj; //this object use for notify the object reached to specific point
     [SerializeField] private GameObject parentObj;
-
+    
+    
 
 
     [SerializeField] private bool isRandomMap = true;
@@ -36,12 +40,12 @@ public class Map : MonoBehaviour
     private Vector3 originPivot;
     private MapDataStruct intialDataStruct;
     private Transform myPlayerTransform;
-    private int repeatNumber = 0;
+    private bool isFirstTime = true;
     private TestResultSolver _testResultSolver = new TestResultSolver();
 
     [SerializeField] private Obstacle[,] map;
     [SerializeField] private bool loadedMap = false;
-
+    [SerializeField] private int repeatNumber = -1;
     public void Awake()
     {
         originPivot = transform.position;
@@ -50,10 +54,11 @@ public class Map : MonoBehaviour
         XSize = (int) ((int) this.transform.localScale.x / blockSizeOfMap);
         zSize = (int) ((int) this.transform.localScale.z / blockSizeOfMap);
         map = new Obstacle[XSize, zSize];
+        createCheckpoints();
     }
 
     //this function destroy  walls and goals and palyers
-    public void destroyElements()
+    private void destroyElements()
     {
         Transform[] childs = parentObj.GetComponentsInChildren<Transform>();
         for (int i = 1; i < childs.Length; i++)
@@ -62,8 +67,22 @@ public class Map : MonoBehaviour
         }
     }
 
+    
+    //this function dont destroy the user
+    private void destroyAllObstacles()
+    {
+        Obstacle[] childs = parentObj.GetComponentsInChildren<Obstacle>();
+        for (int i = 1; i < childs.Length; i++)
+        {
+            Destroy(childs[i].gameObject);
+        }
+    }
+    
+
     public void Start()
     {
+       
+        
         if (loadedMap)
         {
             return;
@@ -127,18 +146,89 @@ public class Map : MonoBehaviour
                 fast: true);
             playerStartPos = start;
         }
-        // GameManager.Instance.saveMap(1); //todo must remove 
-        // GameManager.Instance.saveMap(2);
+        
+        
     }
 
-    private void makeRandomMap()
+    private List<GameObject> checkpointList = new List<GameObject>();
+    private void createCheckpoints()
+    {
+        // create checkpoint object
+        if (checkpointObj != null)
+        {
+            for (int i = 0; i < XSize; i++)
+            {
+                for (int j = 0; j < zSize; j++)
+                {
+                    Vector3 pos = safeCalculatePosInPMap(i, j, checkpointObj.transform);
+                    GameObject newObj = Instantiate(checkpointObj, pos, quaternion.identity);
+                    checkpointList.Add(newObj);
+                    newObj.transform.parent = parentObj.transform;
+                }
+            }
+        }
+    }
+    
+    // private void refreshCheckpoints()
+    // {
+    //     //activate all checkpoint that is made in create checkpoint function
+    //     for (int i = 0; i < checkpointList.Count; i++)
+    //     {
+    //         checkpointList[i].SetActive(true);
+    //     }
+    // }
+
+    private IEnumerator refreshCheckpoints()
+    {
+        //activate all checkpoint that is made in create checkpoint function
+        yield return null;
+        for (int i = 0; i < checkpointList.Count; i++)
+        {
+            checkpointList[i].SetActive(true);
+        }
+
+        yield return null;
+    }
+
+    public bool checkAllCheckpointsCatched(int checkPoint)
+    {
+
+        if ( checkPoint == checkpointList.Count )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public List<GameObject> getCheckPointsState()
+    {
+        return checkpointList;
+    }
+    
+
+    private void makeRandomMap(bool savePlayer = false)
     {
         // random map
+        if (savePlayer)
+        {
+            //just walls and goals
+            destroyAllObstacles();
+        }
+        else
+        {
+            //destroy walls goals and player
+            destroyElements();
+        }
+
         float sum = chanceOfEmptyWall + chanceOfNormallWall + chanceOfOnWayWall;
         float probEmptyWall = chanceOfEmptyWall / sum;
         float probNormallWall = chanceOfNormallWall / sum;
         float probOneWayWall = chanceOfOnWayWall / sum;
 
+        emptyList = new List<int[]>();
         for (int i = 0; i < XSize; i++)
         {
             for (int j = 0; j < zSize; j++)
@@ -166,8 +256,7 @@ public class Map : MonoBehaviour
                 newObj.GetComponent<Obstacle>().setterXZ(i, j, this);
             }
         }
-
-        choosePlayerStartPointAndGoals(numberOfGoals);
+        choosePlayerStartPointAndGoals(numberOfGoals , savePlayer);
     }
 
     //just for test 
@@ -212,13 +301,25 @@ public class Map : MonoBehaviour
         _testResultSolver.id = structData.id;
         _testResultSolver.numberOfrepeat = GameManager.Instance.getNumberOfRepeat();
         _testResultSolver.avgOfpoints = 0;
+        _testResultSolver.avgStepNumber = 0;
+        _testResultSolver.maxOfGoalReach = 0;
+        // _testResultSolver.checkPointIsActive = clearCheckPointIsActive();
         
 
 
         //
 
         numberOfGoals = 0;
-        repeatNumber = 0;
+        if (isFirstTime)
+        {
+            repeatNumber = -1;
+            isFirstTime = false;
+        }
+        else
+        {
+            repeatNumber = 0;    
+        }
+        
         intialDataStruct = structData;
         GameManager.checkMaxId(structData.id);
         this.id = structData.id;
@@ -228,17 +329,7 @@ public class Map : MonoBehaviour
         transform.localScale = new Vector3(XSize * blockSizeOfMap, 0.3f, zSize * blockSizeOfMap);
 
 
-        //make all blocks
-        for (int i = 0; i < structData.blocksStates.Count; i++)
-        {
-            int x = i / XSize;
-            int z = i % XSize;
-            changeMap(x, z, structData.blocksStates[i]);
-            if (structData.blocksStates[i] == 3)
-            {
-                numberOfGoals++;
-            }
-        }
+        
 
         //make the player
         int[] start = structData.playerPos.ToArray();
@@ -251,28 +342,8 @@ public class Map : MonoBehaviour
             .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
                 this);
         tempPlayerParent.setUltimateAndBombNumber(structData.ultimateNumber, structData.bombNumber);
-    }
-
-    public void remakeMapByStruct(MapDataStruct structData , Transform myPlayerTransform)
-    {
-        _testResultSolver.id = structData.id;
-        _testResultSolver.numberOfrepeat = GameManager.Instance.getNumberOfRepeat();
-        _testResultSolver.avgOfpoints = 0;
         
-
-
-        //
-
-        numberOfGoals = 0;
-        repeatNumber = 0;
-        intialDataStruct = structData;
-        this.id = structData.id;
-        XSize = structData.XSize;
-        zSize = structData.ZSize;
-        blockSizeOfMap = structData.blockSize;
-        transform.localScale = new Vector3(XSize * blockSizeOfMap, 0.3f, zSize * blockSizeOfMap);
-
-        updateEmptyList();
+        
         //make all blocks
         for (int i = 0; i < structData.blocksStates.Count; i++)
         {
@@ -284,6 +355,51 @@ public class Map : MonoBehaviour
                 numberOfGoals++;
             }
         }
+    }
+
+    public void remakeMapByStruct(MapDataStruct structData , Transform myPlayerTransform)
+    {
+        _testResultSolver.id = structData.id;
+        _testResultSolver.numberOfrepeat = GameManager.Instance.getNumberOfRepeat();
+        _testResultSolver.avgOfpoints = 0;
+        _testResultSolver.avgStepNumber = 0;
+        _testResultSolver.maxOfGoalReach = 0;
+        _testResultSolver.checkPointIsActive = clearCheckPointIsActive();
+        
+
+
+        //
+
+        numberOfGoals = 0;
+        if (isFirstTime)
+        {
+            repeatNumber = -1;
+            isFirstTime = false;
+        }
+        else
+        {
+            repeatNumber = 0;    
+        }
+        intialDataStruct = structData;
+        this.id = structData.id;
+        XSize = structData.XSize;
+        zSize = structData.ZSize;
+        blockSizeOfMap = structData.blockSize;
+        transform.localScale = new Vector3(XSize * blockSizeOfMap, 0.3f, zSize * blockSizeOfMap);
+
+        updateEmptyList();
+        //make all blocks
+        StartCoroutine(makeWallsAndGoalsByDelay(structData));
+        // for (int i = 0; i < structData.blocksStates.Count; i++)
+        // {
+        //     int x = i / XSize;
+        //     int z = i % XSize;
+        //     changeMap(x, z, structData.blocksStates[i]);
+        //     if (structData.blocksStates[i] == 3)
+        //     {
+        //         numberOfGoals++;
+        //     }
+        // }
 
         //find all users
         int[] start = structData.playerPos.ToArray();
@@ -297,44 +413,69 @@ public class Map : MonoBehaviour
         tempPlayerParent.setUltimateAndBombNumber(structData.ultimateNumber, structData.bombNumber);
     }
 
+    private IEnumerator makeWallsAndGoalsByDelay(MapDataStruct structData)
+    {
+        yield return null;
+        numberOfGoals = 0;
+        for (int i = 0; i < structData.blocksStates.Count; i++)
+        {
+            int x = i / XSize;
+            int z = i % XSize;
+            changeMap(x, z, structData.blocksStates[i]);
+            if (structData.blocksStates[i] == 3)
+            {
+                numberOfGoals++;
+            }
+        }
+    }
+    
+    
     //reset just use for maps that loaded from save file 
     //if return false its not reset. this map is removed and replaced by another map
     //true show normal reset for class
-    public bool resetMap(int points = -1 , int steps = -1)
+    public bool resetMap(int points = -1 , int steps = -1, List<int> checkPoints = null)
     {
+        if (isRandomMap)
+        {
+            Debug.Log("i destroy all things");
+            makeRandomMap(true);
+            StartCoroutine(refreshCheckpoints()) ; // reset all checkpoints;
+            return false;
+        }
+        
         int[] lastPos = myPlayerTransform.GetComponent<PlayerParent>().getPosIndex();
         if (GameManager.Instance.getManagerState() == ManagerState.heuristicTraining)
         {
+            Debug.Log("repeatNumber : " + repeatNumber);
             updateSolverStruct(points , steps );
-            if (repeatNumber >= GameManager.Instance.getNumberOfRepeat())
+            if (repeatNumber + 1 >= GameManager.Instance.getNumberOfRepeat())
             {
                 GameManager.Instance.writetoFileSolverStruct(_testResultSolver);
                 // GameManager.Instance.loadNextMap(this.gameObject, this.id);
                 MapDataStruct temp = GameManager.Instance.getNextMapStruct(this.id);
                 remakeMapByStruct(temp,myPlayerTransform);
-                return true;
+                return false;
             }
         }
-
+        
         if (GameManager.Instance.getManagerState() == ManagerState.testFromFile)
         {
-            updateSolverStruct(points , steps);
-            if (repeatNumber >= GameManager.Instance.getNumberOfRepeat())
+            // CheckArray(checkPoints);
+            updateSolverStruct(points , steps,checkPoints);
+            if (repeatNumber + 1 >= GameManager.Instance.getNumberOfRepeat())
             {
                 GameManager.Instance.writetoFileSolverStruct(_testResultSolver);
-                GameManager.Instance.loadNextMap(this.gameObject, this.id);
+                MapDataStruct temp = GameManager.Instance.getNextMapStruct(this.id);
+                remakeMapByStruct(temp,myPlayerTransform);
+                StartCoroutine(refreshCheckpoints()) ; // reset all checkpoints
+                // _testResultSolver.checkPointIsActive = clearCheckPointIsActive();
                 return false;
             }
         }
 
         repeatNumber++;
-
-        if (isRandomMap)
-        {
-            destroyElements();
-            makeRandomMap();
-            return true;
-        }
+        
+        
 
         Collider collider = myPlayerTransform.GetComponent<CapsuleCollider>();
         collider.enabled = false;
@@ -378,12 +519,24 @@ public class Map : MonoBehaviour
         if (GameManager.Instance.isRandomTarget())
         {
 
-            StartCoroutine(makeRandomGoals(collider,lastPos));
+            StartCoroutine(makeRandomGoals(collider, lastPos));
         }
+
+        StartCoroutine(refreshCheckpoints()); // reset all checkpoints;
 
         return true;
     }
 
+    public static void CheckArray(List<int> ls)
+    {
+        String s = "";
+        foreach (var VARIABLE in ls)
+        {
+            s += VARIABLE;
+        }
+        Debug.Log(s);
+    }
+    
     private IEnumerator makeRandomGoals(Collider collider,int[] lastPlayerPos)
     {
         yield return null;
@@ -438,21 +591,37 @@ public class Map : MonoBehaviour
     }
 
 
-    private void choosePlayerStartPointAndGoals(int goalNumbers)
+    private void choosePlayerStartPointAndGoals(int goalNumbers , bool savePlayer)
     {
         List<int[]> tempEmptyList = new List<int[]>(emptyList);
         int rnd = Random.Range(0, tempEmptyList.Count);
         int[] start = tempEmptyList[rnd];
         tempEmptyList.RemoveAt(rnd);
-        GameObject _playerObj = instanceInMap(GameManager.Instance.getPlayerGameObject(), start[0], start[1]);
-        myPlayerTransform = _playerObj.transform;
         playerStartPos = start;
         Debug.Log("started at" + playerStartPos[0] + " -- " + playerStartPos[1]);
+        if (savePlayer)
+        {
+            Debug.Log( "id of player" +myPlayerTransform.gameObject.GetInstanceID());
+            PlayerParent tempPlayerParent = this.GetComponentInChildren<PlayerParent>();
+            // _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
+            tempPlayerParent
+                .setPos((Vector3) calculatePosInMap(start[0], start[1], myPlayerTransform.transform) + Vector3.up, start, true,
+                    this);
+            tempPlayerParent.setUltimateAndBombNumber(Random.Range(0,maxUltimate),Random.Range(0,maxBoomb) );
+        }
+        else
+        {
+            GameObject _playerObj = instanceInMap(GameManager.Instance.getPlayerGameObject(), start[0], start[1]);
+            myPlayerTransform = _playerObj.transform;
+            // _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
+            _playerObj.GetComponent<PlayerParent>()
+                .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
+                    this);
+        }
+        
+        
 
-        // _playerObj.transform.parent = null; //player is not child of wall in inspector of engine 
-        _playerObj.GetComponent<PlayerParent>()
-            .setPos((Vector3) calculatePosInMap(start[0], start[1], _playerObj.transform) + Vector3.up, start, true,
-                this);
+        
 
         for (int i = 0; i < goalNumbers && tempEmptyList.Count > 1; i++)
         {
@@ -466,7 +635,7 @@ public class Map : MonoBehaviour
         }
     }
 
-    public GameObject instanceInMap(GameObject obj, int i, int j, float Y_offset = 0f)
+    private GameObject instanceInMap(GameObject obj, int i, int j, float Y_offset = 0f)
     {
         GameObject result = Instantiate(obj,
             originPivot + new Vector3(i * blockSizeOfMap - XSize * blockSizeOfMap / 2 + blockSizeOfMap / 2,
@@ -563,7 +732,7 @@ public class Map : MonoBehaviour
                 newObj.GetComponent<Obstacle>().setterXZ(oldX, oldY, this);
                 break;
             case 3:
-                Debug.Log("goal created");
+                // Debug.Log("goal created");
                 newObj = instanceInMap(_goal, oldX, oldY, 0.5f);
                 newObj.GetComponent<Obstacle>().setterXZ(oldX, oldY, this);
                 // Debug.Log(newObj.transform.position);
@@ -643,7 +812,7 @@ public class Map : MonoBehaviour
         GameManager.Instance.saveMap(id);
     }
 
-    public void updateSolverStruct(int point,int stepNumbers)
+    public void updateSolverStruct(int point,int stepNumbers,List<int> checkPoints = null)
     {
         if (point == -1 || stepNumbers < 3)
         {
@@ -658,14 +827,46 @@ public class Map : MonoBehaviour
         }
 
         _testResultSolver.avgOfpoints += avgPlus;
-        _testResultSolver.stepNumber += avgStepPlus;
+        _testResultSolver.avgStepNumber += avgStepPlus;
+        if (checkPoints != null)
+        {
+            if (_testResultSolver.checkPointIsActive == null)
+            {
+                Debug.Log("yes side");
+                _testResultSolver.checkPointIsActive = checkPoints;
+            }
+            else
+            {
+                Debug.Log("noSide");
+                for (int i = 0; i < _testResultSolver.checkPointIsActive.Count; i++)
+                {
+                    if (checkPoints[i] == 0 && _testResultSolver.checkPointIsActive[i] ==1)
+                    {
+                        _testResultSolver.checkPointIsActive[i] = 0;
+                    }
+                }
+            }
+        }
     }
 
+    private List<int> clearCheckPointIsActive()
+    {
+        List<int> cleanCheckpoints = new List<int>();
+        for (int i = 0; i < checkpointList.Count; i++)
+        {
+            cleanCheckpoints.Add(1);
+        }
+
+        return cleanCheckpoints;
+    }
+
+    
+    //based on number of repeat
     public bool canReset()
     {
-        if (repeatNumber== GameManager.Instance.getNumberOfRepeat() && 
-                (/*GameManager.Instance.getManagerState() == ManagerState.heuristicTraining
-                 ||*/GameManager.Instance.getManagerState() == ManagerState.testFromFile ))
+        if (repeatNumber + 1 >= GameManager.Instance.getNumberOfRepeat() && 
+                (GameManager.Instance.getManagerState() == ManagerState.heuristicTraining
+                 ||GameManager.Instance.getManagerState() == ManagerState.testFromFile ))
         {
             return false;
         }

@@ -10,7 +10,6 @@ public class GameManager : Singleton<GameManager>
     // public bool learningMode = true;
     [SerializeField] private GameObject mapObj;
     [SerializeField] private List<Map> _maps;
-    [SerializeField] private bool loadFromSavedData;
     [SerializeField] private ManagerState _managerState;
     [SerializeField] private string saveFileName;
     [SerializeField] private string saveResultFileName;
@@ -50,9 +49,17 @@ public class GameManager : Singleton<GameManager>
     
     void Awake()
     {
-        // load
-        ListOfMapsStruct = loadMapsStructs();
-        // Debug.Log("here : " + ListOfMapsStruct._structsMap.Count );
+        try
+        {
+            // load
+            ListOfMapsStruct = loadMapsStructs();
+            // Debug.Log("here : " + ListOfMapsStruct._structsMap.Count );
+        }
+        catch (Exception e)
+        {
+            Debug.Log("load directory not found");
+        }
+        
         
         //find maxid that has been saved 
         for (int i = 0; i < ListOfMapsStruct._structsMap.Count; i++)
@@ -67,7 +74,7 @@ public class GameManager : Singleton<GameManager>
         // this line clear defualt array list with null values when we use save file we must clean the list
         _maps = new List<Map>();
         
-        if (_managerState == ManagerState.trainFromFile)
+        if (_managerState == ManagerState.trainFromFile || _managerState == ManagerState.trainBomberFromFile)
         {
             for (int i = 0; i < ListOfMapsStruct._structsMap.Count; i++)
             {
@@ -109,6 +116,9 @@ public class GameManager : Singleton<GameManager>
         
     }
 
+    
+    
+    
     public void removeSavedId(int id)
     {
         for (int i = 0; i < ListOfMapsStruct._structsMap.Count; i++)
@@ -220,7 +230,7 @@ public class GameManager : Singleton<GameManager>
         FileManager.LoadFromFile("saveFiles//"+saveFileName, out res);
         Debug.Log(res);
         loadedStructs.LoadFromJson(res);
-        Debug.Log(loadedStructs._structsMap[0].blocksStates.Count);
+        // Debug.Log(loadedStructs._structsMap[0].blocksStates.Count);
         return loadedStructs;
     }
 
@@ -242,16 +252,32 @@ public class GameManager : Singleton<GameManager>
     public void writetoFileSolverStruct(TestResultSolver testResultSolver)
     {
         string added = "";
+        added += "\n";
         added += testResultSolver.id;
         added += ",";
         added += testResultSolver.numberOfrepeat;
         added += ",";
-        added += testResultSolver.stepNumber;
+        added += testResultSolver.avgStepNumber;
         added += ",";
         added += testResultSolver.avgOfpoints;
         added += ",";
         added += testResultSolver.maxOfGoalReach;
-        added += "\n";
+        
+        List<int> checkpoints = testResultSolver.checkPointIsActive;
+        if (checkpoints!=null)
+        {
+            added += ",";
+            for (int i = 0; i < checkpoints.Count; i++)
+            {
+                if (checkpoints[i] == 1)
+                {
+                    added += i + "-";
+                }
+
+            }
+        }
+        
+        
         
         
         string current;
@@ -297,14 +323,16 @@ public enum ManagerState
     testFromFile,
     trainFromFile,
     customMap,
-    heuristicTraining
+    heuristicTraining,
+    trainBomberFromFile
 }
 
 public struct TestResultSolver
 {
     public int id;
     public int numberOfrepeat;
-    public float stepNumber;
+    public float avgStepNumber;
     public float avgOfpoints;
     public int maxOfGoalReach; // maximum number of that available
+    public List<int> checkPointIsActive;
 }
