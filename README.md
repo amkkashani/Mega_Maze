@@ -1,5 +1,5 @@
 [![Made with Unity](https://img.shields.io/badge/Made%20with-Unity-57b9d3.svg?style=flat&logo=unity)](https://unity3d.com)
-<img src="https://badges.aleen42.com/src/tensorflow.svg">
+![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?logo=TensorFlow&logoColor=white)
 # Mega_Maze
 Mega_Maze is a advance version of the popular maze.
 In this game you can destroy  walls by 2 kinds of bombs & you have limitation in usage of the bombs
