@@ -11,7 +11,7 @@ public class CheckPoint : MonoBehaviour
             PlayerAgentDestroyer player = other.GetComponent<PlayerAgentDestroyer>();
             if (player != null)
             {
-                player.rechedTheCheckPoint();
+                player.catchCheckpoint();
                 this.gameObject.SetActive(false);
             }
         }

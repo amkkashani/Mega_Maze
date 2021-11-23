@@ -143,7 +143,7 @@ public class PlayerAgent : Agent ,PlayerParent
         lastLevelSteps = StepCount;
         switch (vectorAction[0])
         {
-            case 0: // end episod
+            case 0: // end episode
                 AddReward(-50);
                 // finishLevel();
                 break;
@@ -325,12 +325,10 @@ public class PlayerAgent : Agent ,PlayerParent
         AddReward(value*100);
         if (map.getNumberOfGoals() == points)
         {
-            Debug.Log("end episod");
+            Debug.Log("end episode");
             finishLevel();
             
         }
-        
-        
     }
 
     private void finishLevel()
@@ -354,7 +352,6 @@ public class PlayerAgent : Agent ,PlayerParent
     
     public override void CollectObservations(VectorSensor sensor)
     {
-        // Debug.Log("observed");
         List<int> states = map.mapStatesAsInt();
         for (int i = 0; i < states.Count; i++)
         {

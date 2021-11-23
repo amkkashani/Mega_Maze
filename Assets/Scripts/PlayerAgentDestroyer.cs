@@ -344,7 +344,6 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     
     public override void CollectObservations(VectorSensor sensor)
     {
-        // Debug.Log("observed");
         List<GameObject> myCheckPoints = map.getCheckPointsState();
         for (int i = 0; i < myCheckPoints.Count; i++)
         {
@@ -383,7 +382,7 @@ public class PlayerAgentDestroyer : Agent ,PlayerParent
     }
 
     [SerializeField]private int catchedCheckpoint = 0;
-    public void rechedTheCheckPoint()
+    public void catchCheckpoint()
     {
         // Debug.Log("reached");
         catchedCheckpoint++;
