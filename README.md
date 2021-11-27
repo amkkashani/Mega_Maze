@@ -11,3 +11,11 @@ In casual games the need is to  make infinite levels for users and in this probl
 But there is no Certainty about solvability of levels.
 Therefore we use Reinforcement Learning(RL) to solve levels before users can play them. At the end only levels that solved by RL can be deployed in game for all users
 
+
+## Complete explanations
+
+<p align="left">
+  <a href="https://www.youtube.com/watch?v=LyYJn_sB-cs">
+  <img src="https://github.com/amkkashani/Mega_Maze/blob/master/images/youTubeBanner.png?raw=true" alt="YouTube video"/>
+  </a>
+</p>
