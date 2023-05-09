@@ -15,7 +15,7 @@ Therefore we use Reinforcement Learning(RL) to solve levels before users can pla
 ## Complete explanations
 
 <p align="left">
-  <a href="https://www.youtube.com/watch?v=LyYJn_sB-cs">
+  <a href="https://www.youtube.com/watch?v=LyYJn_sB-cs](https://youtu.be/uPQq6S4P8y4">
   <img src="https://github.com/amkkashani/Mega_Maze/blob/master/images/youTubeBanner.png?raw=true" alt="YouTube video"/>
   </a>
 </p>
